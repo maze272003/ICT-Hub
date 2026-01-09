@@ -14,10 +14,11 @@ import {
   BookOpen,
   Users
 } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
 const Welcome = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userName, setUserName] = useState("Student"); // This can be dynamic later
+  const [userName, setUserName] = useState("Student"); 
 
   const navigation = [
     { name: 'Home', href: '#home', icon: <Sparkles size={18} /> },
@@ -26,51 +27,11 @@ const Welcome = () => {
   ];
 
   const timelineSteps = [
-    {
-      id: 1,
-      title: "Project Conceptualization",
-      description: "Identifying the need for a dedicated ICT portal for FMNHS Grade 10 students.",
-      icon: "💡"
-    },
-    {
-      id: 2,
-      title: "Design & Theme Selection",
-      description: "Choosing the Navy Blue and Cyan professional technology aesthetic.",
-      icon: "🎨"
-    },
-    {
-      id: 3,
-      title: "Development Phase",
-      description: "Coding the frontend interface using React and integrating student resources.",
-      icon: "⚡"
-    },
-    {
-      id: 4,
-      title: "Launch & Deployment",
-      description: "Making TechNest accessible to all Grade 10 ICT-TLE students.",
-      icon: "🚀"
-    }
+    { id: 1, title: "Project Conceptualization", description: "Identifying the need for a dedicated ICT portal for FMNHS Grade 10 students.", icon: "💡" },
+    { id: 2, title: "Design & Theme Selection", description: "Choosing the Navy Blue and Cyan professional technology aesthetic.", icon: "🎨" },
+    { id: 3, title: "Development Phase", description: "Coding the frontend interface using React and integrating student resources.", icon: "⚡" },
+    { id: 4, title: "Launch & Deployment", description: "Making TechNest accessible to all Grade 10 ICT-TLE students.", icon: "🚀" }
   ];
-
-  // Color Palette
-  const colors = {
-    primary: {
-      dark: '#0f172a', // Navy Blue
-      medium: '#1e293b',
-      light: '#334155'
-    },
-    accent: {
-      cyan: '#06b6d4', // Bright Cyan
-      cyanLight: '#22d3ee',
-      cyanDark: '#0891b2'
-    },
-    neutral: {
-      white: '#ffffff',
-      grayLight: '#f8fafc',
-      grayMedium: '#cbd5e1',
-      grayDark: '#64748b'
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-slate-900 font-sans scroll-smooth">
@@ -89,82 +50,61 @@ const Welcome = () => {
               </span>
             </div>
             
-            {/* Desktop Navigation */}
             <div className="hidden md:block">
               <div className="flex items-center space-x-1">
                 {navigation.map((item) => (
-                  <a 
-                    key={item.name} 
-                    href={item.href} 
-                    className="group relative px-6 py-3 rounded-xl font-medium hover:bg-slate-800/50 transition-all duration-300 flex items-center space-x-2"
-                  >
-                    <span className="text-cyan-300 group-hover:text-cyan-400 transition-colors">
-                      {item.icon}
-                    </span>
+                  <a key={item.name} href={item.href} className="group relative px-6 py-3 rounded-xl font-medium hover:bg-slate-800/50 transition-all duration-300 flex items-center space-x-2">
+                    <span className="text-cyan-300 group-hover:text-cyan-400 transition-colors">{item.icon}</span>
                     <span className="group-hover:text-cyan-100 transition-colors">{item.name}</span>
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-8 h-0.5 bg-cyan-500 rounded-full transition-all duration-300"></div>
                   </a>
                 ))}
-                <button className="ml-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
+                
+                {/* 2. NAVIGATION ENTER PORTAL BUTTON - Ina-update para sa Login */}
+                <Link 
+                  href={route('login')} 
+                  className="ml-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 transform hover:-translate-y-0.5"
+                >
                   Enter Portal
-                </button>
+                </Link>
               </div>
             </div>
 
-            {/* Mobile menu button */}
             <div className="md:hidden">
-              <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors"
-              >
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors">
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
         {isMenuOpen && (
           <div className="md:hidden bg-gradient-to-b from-slate-800 to-slate-900 px-4 py-6 space-y-2 border-t border-slate-700/50 backdrop-blur-xl">
             {navigation.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="flex items-center space-x-3 px-4 py-4 rounded-xl text-base font-medium hover:bg-slate-700/50 transition-all duration-300 group"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="p-2 bg-slate-700/50 rounded-lg group-hover:bg-cyan-500/20 transition-colors">
-                  {item.icon}
-                </div>
+              <a key={item.name} href={item.href} className="flex items-center space-x-3 px-4 py-4 rounded-xl text-base font-medium hover:bg-slate-700/50 transition-all duration-300 group" onClick={() => setIsMenuOpen(false)}>
+                <div className="p-2 bg-slate-700/50 rounded-lg group-hover:bg-cyan-500/20 transition-colors">{item.icon}</div>
                 <span className="group-hover:text-cyan-300 transition-colors">{item.name}</span>
                 <ChevronRight className="ml-auto text-slate-500 group-hover:text-cyan-400 transition-colors" size={20} />
               </a>
             ))}
+            {/* Mobile login link */}
+            <Link href={route('login')} className="flex w-full justify-center bg-cyan-500 text-white py-4 rounded-xl font-bold">
+              Enter Portal
+            </Link>
           </div>
         )}
       </nav>
 
       {/* --- HERO SECTION --- */}
-      <header 
-        id="home" 
-        className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden"
-      >
-        {/* Animated background gradient */}
+      <header id="home" className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900/30">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(6,182,212,0.15)_0%,transparent_50%)]"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(30,41,59,0.3)_0%,transparent_50%)]"></div>
         </div>
         
-        {/* Floating elements */}
-        <div className="absolute top-1/4 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-
         <div className="max-w-6xl z-10 text-center">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 mb-8">
             <Sparkles className="text-cyan-400 mr-2" size={16} />
-            <span className="text-cyan-400 text-sm font-bold uppercase tracking-widest">
-              Fort Magsaysay National High School
-            </span>
+            <span className="text-cyan-400 text-sm font-bold uppercase tracking-widest">Fort Magsaysay National High School</span>
           </div>
           
           <h1 className="text-5xl md:text-8xl font-black mb-8 leading-tight">
@@ -176,36 +116,27 @@ const Welcome = () => {
           </h1>
           
           <p className="text-slate-300 text-xl md:text-2xl mb-12 max-w-3xl mx-auto leading-relaxed">
-            The specialized digital hub for{' '}
-            <span className="relative inline-block">
-              <span className="relative z-10 px-2 font-bold text-cyan-300">
-                Grade 10 ICT-TLE
-              </span>
-              <span className="absolute bottom-0 left-0 w-full h-3 bg-cyan-500/30 -rotate-1 -z-0"></span>
-            </span>
-            {' '}students. Empowering future tech innovators.
+            The specialized digital hub for <span className="relative inline-block"><span className="relative z-10 px-2 font-bold text-cyan-300">Grade 10 ICT-TLE</span><span className="absolute bottom-0 left-0 w-full h-3 bg-cyan-500/30 -rotate-1 -z-0"></span></span> students. Empowering future tech innovators.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <a 
-              href="#about" 
+            {/* 3. HERO BUTTON - I-route din sa Login para diretso sa portal */}
+            <Link 
+              href={route('login')} 
               className="group relative inline-flex items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-12 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transform hover:-translate-y-1"
             >
               <BookOpen className="mr-3" size={22} />
               Explore Platform
               <ChevronRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
-            </a>
-            <button className="group relative inline-flex items-center justify-center bg-transparent border-2 border-cyan-500/50 hover:border-cyan-400 text-cyan-300 hover:text-white px-12 py-4 rounded-2xl font-bold text-lg transition-all duration-300 backdrop-blur-sm hover:bg-cyan-500/10">
+            </Link>
+            
+            <Link 
+              href={route('login')}
+              className="group relative inline-flex items-center justify-center bg-transparent border-2 border-cyan-500/50 hover:border-cyan-400 text-cyan-300 hover:text-white px-12 py-4 rounded-2xl font-bold text-lg transition-all duration-300 backdrop-blur-sm hover:bg-cyan-500/10"
+            >
               View Modules
               <Zap className="ml-3 group-hover:rotate-12 transition-transform" size={20} />
-            </button>
-          </div>
-        </div>
-        
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-cyan-500/50 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-cyan-500 rounded-full mt-2"></div>
+            </Link>
           </div>
         </div>
       </header>
