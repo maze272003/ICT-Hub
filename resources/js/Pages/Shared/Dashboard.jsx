@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react'; // Siniguradong imported ang Link
+import { Head, Link } from '@inertiajs/react';
 import { GraduationCap, Layers, Search, ArrowRight } from 'lucide-react';
 
 export default function Dashboard({ auth }) {
@@ -39,12 +39,11 @@ export default function Dashboard({ auth }) {
                 {/* --- TILES GRID --- */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
-                    {/* --- MY MODULES TILE (Functional Link) --- */}
+                    {/* --- MY MODULES TILE --- */}
                     <Link 
                         href={route('dashboard.modules')} 
                         className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 hover:border-cyan-500/50 transition-all duration-500 cursor-pointer overflow-hidden shadow-xl block"
                     >
-                        {/* Ambient Light Effect */}
                         <div className="absolute -top-12 -right-12 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all"></div>
                         
                         <div className="relative z-10">
@@ -63,8 +62,11 @@ export default function Dashboard({ auth }) {
                         </div>
                     </Link>
 
-                    {/* --- RESEARCH TILE --- */}
-                    <div className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer overflow-hidden shadow-xl">
+                    {/* --- RESEARCH TILE (Functional Link na rin) --- */}
+                    <Link 
+                        href={route('dashboard.research')} 
+                        className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer overflow-hidden shadow-xl block"
+                    >
                         <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all"></div>
                         
                         <div className="relative z-10">
@@ -81,7 +83,7 @@ export default function Dashboard({ auth }) {
                                 <ArrowRight className="ml-2 w-3 h-3 group-hover:translate-x-2 transition-transform" />
                             </div>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* --- PLACEHOLDER TILE --- */}
                     <div className="border-2 border-dashed border-white/5 rounded-[2rem] flex items-center justify-center p-8 opacity-30 hover:opacity-50 transition-opacity">

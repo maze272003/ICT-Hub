@@ -30,6 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () use ($secureCookieSlu
     Route::get("auth/{$secureCookieSlug}/dashboard/modules", function () {
         return Inertia::render('Shared/Modules');
     })->name('dashboard.modules');
+    Route::get("auth/{$secureCookieSlug}/dashboard/research", function () {
+        return Inertia::render('Shared/Research');
+    })->name('dashboard.research');
 
     // Teacher Management Routes
     Route::get("teacher/{$secureCookieSlug}/students", [StudentController::class, 'index'])
@@ -41,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () use ($secureCookieSlu
     // Profile Routes
     Route::get("user/{$secureCookieSlug}/profile", [ProfileController::class, 'edit'])
         ->name('profile.edit');
+        
 });
 require __DIR__.'/db.php';
 require __DIR__.'/auth.php';

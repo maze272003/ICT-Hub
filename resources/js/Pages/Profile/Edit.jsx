@@ -3,35 +3,45 @@ import { Head } from '@inertiajs/react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+// Idinagdag ang Lucide icon para sa header style
+import { Settings2 } from 'lucide-react';
 
-export default function Edit({ mustVerifyEmail, status }) {
+export default function Edit({ auth, mustVerifyEmail, status }) {
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Profile
-                </h2>
-            }
+            user={auth.user}
+            header="Account Settings"
         >
-            <Head title="Profile" />
+            <Head title="Profile Settings" />
 
             <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+                {/* Max-width container para sa consistent alignment */}
+                <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
+                    
+                    {/* TANDAAN: Inalis na natin ang 'bg-white' at 'shadow' wrappers dito.
+                        Ang bawat partial form na in-update natin ay may sarili nang 
+                        'bg-slate-900/40 backdrop-blur-2xl' styling.
+                    */}
+
+                    {/* Section 1: Profile Info */}
+                    <div className="transition-all duration-500 hover:translate-y-[-4px]">
                         <UpdateProfileInformationForm
                             mustVerifyEmail={mustVerifyEmail}
                             status={status}
-                            className="max-w-xl"
+                            className="w-full"
                         />
                     </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
+                    {/* Section 2: Security/Password */}
+                    <div className="transition-all duration-500 hover:translate-y-[-4px]">
+                        <UpdatePasswordForm className="w-full" />
                     </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <DeleteUserForm className="max-w-xl" />
+                    {/* Section 3: Danger Zone */}
+                    <div className="transition-all duration-500 hover:translate-y-[-4px]">
+                        <DeleteUserForm className="w-full" />
                     </div>
+                    
                 </div>
             </div>
         </AuthenticatedLayout>
