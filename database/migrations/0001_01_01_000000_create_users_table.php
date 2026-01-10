@@ -17,6 +17,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            
+            // Dito idadagdag ang role column
+            // Naka-default ito sa 'student' para sa security
+            $table->enum('role', ['student', 'teacher'])->default('student');
+            
             $table->rememberToken();
             $table->timestamps();
         });

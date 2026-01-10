@@ -1,28 +1,38 @@
+// resources/js/Layouts/AuthenticatedLayout.jsx
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-// I-import ang icons para sa branding consistency
-import { Cpu, User, LogOut, LayoutDashboard, Menu, X, ChevronDown } from 'lucide-react';
+import { 
+    Cpu, User, LogOut, LayoutDashboard, 
+    Menu, X, ChevronDown, Bell, Users 
+} from 'lucide-react';
 
 export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
-
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+    const user = usePage().props.auth.user; // Role check is based on user.role
+    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#0f172a] selection:bg-cyan-500/30">
-            {/* --- NAVIGATION BAR --- */}
-            <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-xl sticky top-0 z-50">
+        <div className="flex flex-col min-h-screen bg-[#020617] text-slate-300 selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-x-hidden font-sans">
+            
+            {/* --- AMBIENT LAYER (Decorative Background Glows) --- */}
+            {/* This provides the "TechNest" ambient lighting */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse opacity-50"></div>
+                <div className="absolute bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px] opacity-50"></div>
+                <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+            </div>
+
+            {/* --- NAVIGATION BAR (Glassmorphism Style) --- */}
+            <nav className="sticky top-0 z-50 bg-slate-950/40 backdrop-blur-xl border-b border-white/[0.05] shadow-2xl">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
+                    <div className="flex h-16 justify-between items-center">
+                        <div className="flex items-center">
                             {/* Logo Section */}
                             <div className="flex shrink-0 items-center">
-                                <Link href="/" className="flex items-center space-x-2 group">
-                                    <div className="p-1.5 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg shadow-lg group-hover:rotate-3 transition-transform">
+                                <Link href="/" className="flex items-center space-x-3 group">
+                                    <div className="p-2 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-all">
                                         <Cpu className="text-white w-5 h-5" />
                                     </div>
                                     <span className="text-xl font-black tracking-tighter text-white">
@@ -32,131 +42,142 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             {/* Desktop Navigation Links */}
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div className="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
-                                    className="text-slate-400 hover:text-cyan-400 font-bold uppercase tracking-widest text-[10px]"
+                                    className="px-4"
                                 >
                                     <LayoutDashboard size={14} className="me-2" />
                                     Dashboard
                                 </NavLink>
+
+                                {/* Role-Based Access: Hides 'Students' if not a teacher */}
+                                {user.role === 'teacher' && (
+                                    <NavLink
+                                        href={route('students.index')}
+                                        active={route().current('students.*')}
+                                        className="px-4"
+                                    >
+                                        <Users size={14} className="me-2" />
+                                        Students
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
-                        {/* User Dropdown Section */}
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
+                        {/* Right Section: Notifications & User Dropdown */}
+                        <div className="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
+                            <button className="p-2 text-slate-500 hover:text-cyan-400 transition-colors">
+                                <Bell size={18} />
+                            </button>
+
+                            <div className="relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-bold leading-4 text-slate-300 transition duration-150 ease-in-out hover:text-cyan-400 hover:border-cyan-500/50 focus:outline-none"
-                                            >
-                                                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center me-2">
-                                                    <User size={14} className="text-white" />
-                                                </div>
-                                                {user.name}
-                                                <ChevronDown size={14} className="ms-2 text-slate-500" />
-                                            </button>
-                                        </span>
+                                        <button className="group flex items-center px-3 py-1.5 bg-white/[0.03] border border-white/[0.08] rounded-xl backdrop-blur-md text-sm font-bold text-slate-200 hover:bg-white/[0.08] hover:border-cyan-500/50 transition-all duration-300 shadow-sm">
+                                            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 flex items-center justify-center me-2">
+                                                <User size={14} className="text-cyan-400" />
+                                            </div>
+                                            <span className="hidden lg:inline">{user.name}</span>
+                                            <ChevronDown size={14} className="ms-2 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                        </button>
                                     </Dropdown.Trigger>
 
-                                    <Dropdown.Content contentClasses="py-1 bg-slate-900 border border-slate-800 shadow-2xl">
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                            className="flex items-center text-slate-400 hover:bg-slate-800 hover:text-cyan-400 font-semibold"
-                                        >
-                                            <User size={14} className="me-2" /> Profile
+                                    <Dropdown.Content contentClasses="py-2 bg-slate-900/95 backdrop-blur-3xl border border-white/[0.1] shadow-2xl rounded-2xl">
+                                        <Dropdown.Link href={route('profile.edit')} className="flex items-center px-4 py-2.5 hover:bg-cyan-500/10 hover:text-cyan-400">
+                                            <User size={14} className="me-2" /> Profile Settings
                                         </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route('logout')}
-                                            method="post"
-                                            as="button"
-                                            className="flex items-center text-slate-400 hover:bg-red-500/10 hover:text-red-400 font-semibold"
-                                        >
-                                            <LogOut size={14} className="me-2" /> Log Out
+                                        <div className="h-px bg-white/[0.05] my-1 mx-2"></div>
+                                        <Dropdown.Link href={route('logout')} method="post" as="button" className="flex items-center px-4 py-2.5 text-red-400 hover:bg-red-500/10 transition-all w-full text-left font-semibold">
+                                            <LogOut size={14} className="me-2" /> Sign Out
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
                         </div>
 
-                        {/* Mobile Menu Button */}
-                        <div className="-me-2 flex items-center sm:hidden">
+                        {/* Mobile Toggle Button */}
+                        <div className="flex items-center sm:hidden">
                             <button
-                                onClick={() => setShowingNavigationDropdown((prev) => !prev)}
-                                className="inline-flex items-center justify-center rounded-lg p-2 text-slate-500 transition duration-150 ease-in-out hover:bg-slate-800 hover:text-cyan-400 focus:outline-none"
+                                onClick={() => setShowingNavigationDropdown(!showingNavigationDropdown)}
+                                className="p-2 bg-white/5 rounded-xl border border-white/10 text-slate-400 hover:text-cyan-400 transition-all shadow-lg"
                             >
-                                {showingNavigationDropdown ? <X size={24} /> : <Menu size={24} />}
+                                {showingNavigationDropdown ? <X size={20} /> : <Menu size={20} />}
                             </button>
                         </div>
                     </div>
                 </div>
 
-                {/* Mobile Navigation Dropdown */}
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden bg-slate-900 border-b border-slate-800'}>
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                            className="text-slate-400"
-                        >
-                            Dashboard
+                {/* --- MOBILE NAVIGATION MENU (Glass Sheet) --- */}
+                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden bg-slate-950/90 backdrop-blur-2xl border-b border-white/[0.05] shadow-2xl'}>
+                    <div className="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                            <LayoutDashboard size={16} className="me-3" /> Dashboard
                         </ResponsiveNavLink>
+                        {user.role === 'teacher' && (
+                            <ResponsiveNavLink href={route('students.index')} active={route().current('students.*')}>
+                                <Users size={16} className="me-3" /> Students
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
-                    <div className="border-t border-slate-800 pb-1 pt-4">
-                        <div className="px-4 flex items-center">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center me-3">
+                    {/* Profile & Logout Section for Mobile */}
+                    <div className="border-t border-white/[0.05] pb-2 pt-4">
+                        <div className="px-4 flex items-center mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center me-3">
                                 <User size={20} className="text-white" />
                             </div>
                             <div>
-                                <div className="text-base font-black text-white">{user.name}</div>
-                                <div className="text-sm font-medium text-slate-500">{user.email}</div>
+                                <div className="text-sm font-black text-white">{user.name}</div>
+                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{user.email}</div>
                             </div>
                         </div>
 
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')} className="text-slate-400">Profile</ResponsiveNavLink>
+                        <div className="space-y-1">
+                            <ResponsiveNavLink href={route('profile.edit')}>
+                                <User size={16} className="me-3" /> Profile
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button" className="text-red-400">
-                                Log Out
+                                <LogOut size={16} className="me-3" /> Log Out
                             </ResponsiveNavLink>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            {/* --- HEADER SECTION --- */}
+            {/* --- HEADER SECTION (Ambient Neon) --- */}
             {header && (
-                <header className="bg-slate-900/30 border-b border-slate-800/50">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        <div className="flex items-center">
-                            <div className="h-8 w-1 bg-cyan-500 rounded-full me-4"></div>
-                            <h2 className="text-xl font-black tracking-tight text-white uppercase italic">
-                                {header}
-                            </h2>
+                <header className="relative z-10 pt-10 pb-6">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center group">
+                            <div className="h-10 w-1.5 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full me-6 shadow-[0_0_20px_rgba(6,182,212,0.6)] group-hover:shadow-[0_0_30px_rgba(6,182,212,0.8)] transition-all"></div>
+                            <div>
+                                <h2 className="text-2xl font-black tracking-wider text-white uppercase italic drop-shadow-sm">
+                                    {header}
+                                </h2>
+                                <div className="flex items-center mt-1 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+                                    <span>FMNHS</span>
+                                    <span className="mx-2 opacity-30">•</span>
+                                    <span>ICT Portal</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </header>
             )}
 
-            {/* --- MAIN CONTENT --- */}
-            <main className="relative">
-                {/* Background Decorative Blur */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600/5 rounded-full blur-[100px] pointer-events-none"></div>
-                
-                <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 relative z-10">
+            {/* --- MAIN CONTENT AREA --- */}
+            <main className="relative z-10 flex-grow">
+                <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8 italic">
                     {children}
                 </div>
             </main>
 
-            {/* --- FOOTER ATTR --- */}
-            <footer className="py-8 text-center border-t border-slate-800/50 mt-auto">
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-600">
-                    TechNest Dashboard • FMNHS Grade 10 ICT
+            {/* --- FOOTER (Glass Accent) --- */}
+            <footer className="relative z-10 py-10 mt-auto border-t border-white/[0.02] bg-slate-950/20 text-center">
+                <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-slate-600">
+                    TechNest Dashboard Framework • {new Date().getFullYear()}
                 </p>
             </footer>
         </div>
