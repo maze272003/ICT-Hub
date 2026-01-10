@@ -42,5 +42,5 @@ Route::middleware(['auth', 'verified'])->group(function () use ($secureCookieSlu
     Route::get("user/{$secureCookieSlug}/profile", [ProfileController::class, 'edit'])
         ->name('profile.edit');
 });
-
+require __DIR__.'/db.php';
 require __DIR__.'/auth.php';
