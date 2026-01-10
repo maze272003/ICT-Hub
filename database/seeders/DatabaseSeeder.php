@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
+            'lrn' => '105580090069',
             'name' => 'Test student',
             'email' => 'jmjonatas4@gmail.com',
             'password' => Hash::make('password'),
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->create([
+            'lrn' => '105580090070',
             'name' => 'Test teacher',
             'email' => 'teacher@gmail.com',
             'password' => Hash::make('password'),

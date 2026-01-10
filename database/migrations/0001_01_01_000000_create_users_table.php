@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name'); // I-define muna ang name
+            
+            // Ngayon, pwede na ang LRN pagkatapos ng name
+            $table->string('lrn')->unique()->nullable(); 
+            
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             
-            // Dito idadagdag ang role column
-            // Naka-default ito sa 'student' para sa security
+            // Role column: Default sa 'student'
             $table->enum('role', ['student', 'teacher'])->default('student');
             
             $table->rememberToken();
