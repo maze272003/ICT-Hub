@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StudentController;
 use Inertia\Inertia;
 
+// --- PUBLIC ROUTES ---
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -14,26 +15,32 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-// Temporary test route sa web.php
-$dashboardSlug = substr(md5(config('app.key') . 'shared-dashboard'), 0, 12);
-Route::get("auth/{$dashboardSlug}/dashboard", function () {
-    return Inertia::render('Shared/Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-$teacherSlug = substr(md5(config('app.key') . 'teacher-portal'), 0, 64);
-Route::middleware(['auth', 'verified'])->group(function () use ($teacherSlug) {
-    Route::get("/portal/{$teacherSlug}/students", [StudentController::class, 'index'])
+$sessionCookie = request()->cookie('laravel_session') ?? 'guest-access';
+
+// I-hash ang cookie kasama ang APP_KEY para siguradong random at secure
+$secureCookieSlug = substr(md5($sessionCookie . config('app.key')), 0, 100);
+
+Route::middleware(['auth', 'verified'])->group(function () use ($secureCookieSlug) {
+    
+    // Dashboard Route gamit ang hashed cookie slug
+    Route::get("shared/{$secureCookieSlug}/dashboard", function () {
+        return Inertia::render('Shared/Dashboard');
+    })->name('dashboard');
+    Route::get("auth/{$secureCookieSlug}/dashboard/modules", function () {
+        return Inertia::render('Shared/Modules');
+    })->name('dashboard.modules');
+
+    // Teacher Management Routes
+    Route::get("teacher/{$secureCookieSlug}/students", [StudentController::class, 'index'])
         ->name('students.index');
 
-    // Ang URL nito ay magiging: /portal/[random-hash]/students/create
-    Route::get("/portal/{$teacherSlug}/students/create", [StudentController::class, 'create'])
+    Route::get("teacher/{$secureCookieSlug}/students/create", [StudentController::class, 'create'])
         ->name('students.create');
-});
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Profile Routes
+    Route::get("user/{$secureCookieSlug}/profile", [ProfileController::class, 'edit'])
+        ->name('profile.edit');
 });
 
 require __DIR__.'/auth.php';

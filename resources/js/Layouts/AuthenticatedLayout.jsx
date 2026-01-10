@@ -43,9 +43,11 @@ export default function AuthenticatedLayout({ header, children }) {
 
                             {/* Desktop Navigation Links */}
                             <div className="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex">
+                                
                                 <NavLink
                                     href={route('dashboard')}
-                                    active={route().current('dashboard')}
+                                    // Nilagyan natin ng asterisk (*) para maging active kahit sa sub-pages ng dashboard
+                                    active={route().current('dashboard*')} 
                                     className="px-4"
                                 >
                                     <LayoutDashboard size={14} className="me-2" />
@@ -112,7 +114,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 {/* --- MOBILE NAVIGATION MENU (Glass Sheet) --- */}
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden bg-slate-950/90 backdrop-blur-2xl border-b border-white/[0.05] shadow-2xl'}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard*')}>
                             <LayoutDashboard size={16} className="me-3" /> Dashboard
                         </ResponsiveNavLink>
                         {user.role === 'teacher' && (
