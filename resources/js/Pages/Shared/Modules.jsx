@@ -76,44 +76,24 @@ export default function Modules({ auth }) {
     //         window.open(fileUrl, '_blank');
     //     }
     // };
-    // const handleFileView = (file) => {
-    //     const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    //     const fileUrl = `${window.location.origin}/files/pr/Quarter 1/${file.name}`;
-
-    //     if (file.type === 'pptx') {
-    //         if (isLocal) {
-    //             // Pag local, i-download na lang muna para hindi mag-error ang Google preview
-    //             alert("Note: PPTX Preview is only available when the site is live. Downloading file instead.");
-    //             handleDownload(file.name);
-    //         } else {
-    //             // Pag live na, ito ang gagana
-    //             const previewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
-    //             window.open(previewUrl, '_blank');
-    //         }
-    //     } else {
-    //         window.open(fileUrl, '_blank');
-    //     }
-    // };
     const handleFileView = (file) => {
-    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    const fileUrl = `${window.location.origin}/files/pr/Quarter 1/${file.name}`;
+        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const fileUrl = `${window.location.origin}/files/pr/Quarter 1/${file.name}`;
 
-    if (file.type === 'pptx') {
-        if (isLocal) {
-            // Paalala: Hindi gagana ang cloud viewers (Google/Office) sa localhost
-            alert("Note: PPTX Preview is only available when the site is live. Downloading file instead.");
-            handleDownload(file.name);
+        if (file.type === 'pptx') {
+            if (isLocal) {
+                // Pag local, i-download na lang muna para hindi mag-error ang Google preview
+                alert("Note: PPTX Preview is only available when the site is live. Downloading file instead.");
+                handleDownload(file.name);
+            } else {
+                // Pag live na, ito ang gagana
+                const previewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+                window.open(previewUrl, '_blank');
+            }
         } else {
-            // GAMITIN ANG MICROSOFT VIEWER PARA SA MAS MAGANDANG SLIDES UI
-            // Mas maganda ang rendering nito sa PPTX kaysa sa Google Docs Viewer
-            const previewUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`;
-            window.open(previewUrl, '_blank');
+            window.open(fileUrl, '_blank');
         }
-    } else {
-        // Para sa PDF at TXT
-        window.open(fileUrl, '_blank');
-    }
-};
+    };
 
     const handleDownload = (fileName) => {
         const link = document.createElement('a');
