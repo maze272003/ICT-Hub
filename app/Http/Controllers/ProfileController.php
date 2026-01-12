@@ -29,6 +29,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        // $request->validated() now includes 'lrn' because we added it to the Request file
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -37,7 +38,8 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        // Use back() to preserve the secureCookieSlug in the URL
+        return Redirect::back()->with('status', 'profile-updated'); 
     }
 
     /**
