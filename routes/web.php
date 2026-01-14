@@ -23,28 +23,59 @@ $secureCookieSlug = substr(md5($sessionCookie . config('app.key')), 0, 100);
 
 Route::middleware(['auth', 'verified'])->group(function () use ($secureCookieSlug) {
     
-    // Dashboard Route gamit ang hashed cookie slug
+    // --- DASHBOARD ROUTES ---
     Route::get("shared/{$secureCookieSlug}/dashboard", function () {
         return Inertia::render('Shared/Dashboard');
     })->name('dashboard');
+
     Route::get("auth/{$secureCookieSlug}/dashboard/modules", function () {
         return Inertia::render('Shared/Modules');
     })->name('dashboard.modules');
+
     Route::get("auth/{$secureCookieSlug}/dashboard/research", function () {
         return Inertia::render('Shared/Research');
     })->name('dashboard.research');
 
-    // Teacher Management Routes
+    // --- STUDENT MANAGEMENT ROUTES (Complete CRUD) ---
+    // List Students
     Route::get("teacher/{$secureCookieSlug}/students", [StudentController::class, 'index'])
         ->name('students.index');
 
+    // Create Form
     Route::get("teacher/{$secureCookieSlug}/students/create", [StudentController::class, 'create'])
         ->name('students.create');
+    
+    // Store New Student (POST)
+    Route::post("teacher/{$secureCookieSlug}/students", [StudentController::class, 'store'])
+        ->name('students.store');
 
-    // Profile Routes
+    // Edit Form (GET) - Ito ang hinahanap ng error mo kanina
+    Route::get("teacher/{$secureCookieSlug}/students/{student}/edit", [StudentController::class, 'edit'])
+        ->name('students.edit');
+
+    // Update Student (PUT/PATCH)
+    Route::match(['put', 'patch'], "teacher/{$secureCookieSlug}/students/{student}", [StudentController::class, 'update'])
+        ->name('students.update');
+
+    // Delete Student (DELETE)
+    Route::delete("teacher/{$secureCookieSlug}/students/{student}", [StudentController::class, 'destroy'])
+        ->name('students.destroy');
+
+
+    // --- PROFILE ROUTES (Manage Account) ---
+    // Edit Profile Form
     Route::get("user/{$secureCookieSlug}/profile", [ProfileController::class, 'edit'])
         ->name('profile.edit');
+
+    // Update Profile Info
+    Route::patch("user/{$secureCookieSlug}/profile", [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    // Delete Account
+    Route::delete("user/{$secureCookieSlug}/profile", [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
         
 });
+
 require __DIR__.'/db.php';
 require __DIR__.'/auth.php';
