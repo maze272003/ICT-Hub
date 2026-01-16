@@ -1,10 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react'; // Added useState
 import { Head, Link, useForm } from '@inertiajs/react';
-import { User, Lock, Cpu, ArrowLeft, Sparkles, AlertCircle } from 'lucide-react';
+import { User, Lock, Cpu, ArrowLeft, Sparkles, AlertCircle, Mail, Hash } from 'lucide-react'; // Added Mail and Hash icons
 
 export default function Login({ status, canResetPassword }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        login: '', // Ginamit ang 'login' sa halip na 'email'
+    // State para sa pag-switch ng Login Method (Email vs LRN)
+    const [loginMethod, setLoginMethod] = useState('email'); // 'email' or 'lrn'
+
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
+        login: '', 
         password: '',
         remember: false,
     });
@@ -14,6 +17,13 @@ export default function Login({ status, canResetPassword }) {
             reset('password');
         };
     }, []);
+
+    // Function kapag nagpalit ng Tab (Lilinisin ang errors at input)
+    const toggleMethod = (method) => {
+        setLoginMethod(method);
+        setData('login', ''); // Clear input field
+        clearErrors(); // Remove validation errors
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -38,7 +48,7 @@ export default function Login({ status, canResetPassword }) {
             <div className="w-full max-w-md relative z-10">
                 <div className="bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative overflow-hidden">
                     
-                    <div className="relative text-center mb-10">
+                    <div className="relative text-center mb-8">
                         <div className="inline-flex p-4 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl shadow-xl shadow-cyan-500/20 mb-6 transform -rotate-3 hover:rotate-0 transition-transform duration-500">
                             <Cpu className="text-white w-8 h-8" />
                         </div>
@@ -56,19 +66,51 @@ export default function Login({ status, canResetPassword }) {
                         </div>
                     )}
 
+                    {/* --- NEW: TAB SWITCHER --- */}
+                    <div className="grid grid-cols-2 gap-2 mb-8 p-1 bg-slate-950/50 rounded-xl border border-white/5">
+                        <button
+                            type="button"
+                            onClick={() => toggleMethod('email')}
+                            className={`flex items-center justify-center py-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                                loginMethod === 'email' 
+                                ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20' 
+                                : 'text-slate-500 hover:text-slate-300'
+                            }`}
+                        >
+                            <Mail size={14} className="mr-2" /> Email
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => toggleMethod('lrn')}
+                            className={`flex items-center justify-center py-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                                loginMethod === 'lrn' 
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                                : 'text-slate-500 hover:text-slate-300'
+                            }`}
+                        >
+                            <Hash size={14} className="mr-2" /> LRN
+                        </button>
+                    </div>
+                    {/* ------------------------- */}
+
                     <form onSubmit={submit} className="space-y-6">
+                        
+                        {/* DYNAMIC INPUT FIELD BASED ON TAB */}
                         <div>
                             <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">
-                                Email or 12-digit LRN
+                                {loginMethod === 'email' ? 'Email Address' : 'Student LRN'}
                             </label>
                             <div className="relative group">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-cyan-400 transition-colors" size={18} />
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-cyan-400 transition-colors">
+                                    {loginMethod === 'email' ? <User size={18} /> : <Hash size={18} />}
+                                </div>
                                 <input
-                                    type="text"
+                                    type={loginMethod === 'email' ? 'email' : 'text'}
+                                    inputMode={loginMethod === 'lrn' ? 'numeric' : 'text'}
                                     value={data.login}
                                     onChange={(e) => setData('login', e.target.value)}
                                     className="w-full bg-slate-950/50 border border-white/5 text-white rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-cyan-500/40 focus:ring-4 focus:ring-cyan-500/5 transition-all placeholder:text-slate-700 font-medium"
-                                    placeholder="Enter LRN or Email"
+                                    placeholder={loginMethod === 'email' ? 'student@school.edu.ph' : 'Enter 12-Digit LRN'}
                                     required
                                 />
                             </div>
@@ -82,7 +124,7 @@ export default function Login({ status, canResetPassword }) {
                         <div>
                             <div className="flex justify-between items-center mb-2 ml-1">
                                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                                    Security Key
+                                    Password
                                 </label>
                                 {canResetPassword && (
                                     <Link href={route('password.request')} className="text-[9px] font-black text-cyan-500 uppercase tracking-tighter hover:text-cyan-300 transition-colors italic">
@@ -132,7 +174,7 @@ export default function Login({ status, canResetPassword }) {
                                 ) : (
                                     <>
                                         <Sparkles size={16} className="mr-2" />
-                                        Initialize Portal
+                                        {loginMethod === 'email' ? 'Login via Email' : 'Login via LRN'}
                                     </>
                                 )}
                             </button>

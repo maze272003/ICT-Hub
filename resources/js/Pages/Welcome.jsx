@@ -1,26 +1,99 @@
 import React, { useState } from 'react';
 import { 
   Laptop, Cpu, Check, Menu, X, Sparkles, 
-  Zap, BookOpen, Users, Clock 
+  Zap, BookOpen, Users, Clock, ArrowRight, GraduationCap 
 } from 'lucide-react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const LaptopCard = ({ name, role, type }) => {
+    const wallpaperGradient = type === 'teacher' 
+        ? 'from-blue-900/40 via-slate-900 to-purple-900/40' 
+        : 'from-cyan-900/20 via-slate-900 to-teal-900/20';  
+
+    return (
+        <div className="group relative mx-auto w-full max-w-[280px]"> 
+            
+            <div className="relative bg-slate-950 border-[10px] border-slate-800 rounded-t-2xl overflow-hidden transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]">
+                
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-3 bg-slate-800 rounded-b-md flex items-center justify-center z-20">
+                    <div className="w-1 h-1 bg-black rounded-full border-[0.5px] border-slate-600"></div>
+                </div>
+
+                <div className={`relative h-48 flex flex-col items-center justify-center p-4 bg-gradient-to-br ${wallpaperGradient}`}>
+                    
+                    <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-white/5 to-transparent pointer-events-none"></div>
+
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+
+                    <div className="relative z-10 flex flex-col items-center">
+                        <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-3 shadow-inner border border-white/10 group-hover:scale-110 transition-transform">
+                            <Users size={24} className="text-white" />
+                        </div>
+                        
+                        <h4 className="text-white font-bold text-sm md:text-base text-center tracking-tight drop-shadow-md">
+                            {name}
+                        </h4>
+                        
+                        <div className="h-0.5 w-10 bg-cyan-500/50 my-2 rounded-full"></div>
+
+                        <p className={`text-[9px] font-black uppercase tracking-widest text-center ${type === 'teacher' ? 'text-blue-300' : 'text-cyan-400'}`}>
+                            {role}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="relative h-3 w-[112%] -ml-[6%] bg-slate-700 rounded-b-lg shadow-xl flex justify-center items-start border-t border-slate-600">
+            
+                <div className="w-16 h-1 bg-slate-600 rounded-b-md"></div>
+            </div>
+
+            <div className="absolute -bottom-4 left-0 w-full h-4 bg-gradient-to-b from-cyan-500/10 to-transparent blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[100%]"></div>
+        </div>
+    );
+};
+
+const TimelineItem = ({ number, title, content, align }) => {
+    const isLeft = align === 'left';
+    return (
+        <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className={`relative flex flex-col md:flex-row items-center mb-16 md:mb-24 ${isLeft ? '' : 'md:flex-row-reverse'}`}
+        >
+            <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20">
+                 <div className="w-4 h-4 bg-slate-950 border-4 border-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,1)]"></div>
+            </div>
+
+            <div className={`w-full md:w-1/2 pl-16 md:pl-0 ${isLeft ? 'md:pr-16 md:text-right' : 'md:pl-16 md:text-left'}`}>
+                <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <div className="relative bg-slate-900/40 backdrop-blur-sm border border-white/10 p-8 rounded-[2rem] hover:border-cyan-500/30 transition-all">
+                        <span className="text-4xl font-black text-white/5 absolute top-4 right-6">{number}</span>
+                        <h3 className="text-xl md:text-2xl font-black text-white mb-4 uppercase italic tracking-tight">{title}</h3>
+                        <p className="text-slate-400 text-sm leading-relaxed text-justify">
+                            {content}
+                        </p>
+                    </div>
+                </div>
+            </div>
+             
+             <div className="hidden md:block md:w-1/2"></div>
+        </motion.div>
+    );
+};
+
 const Welcome = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userName] = useState("Student");
 
   const navigation = [
     { name: 'Home', href: '#home', icon: <Sparkles size={18} /> },
+    { name: 'Timeline', href: '#timeline', icon: <Clock size={18} /> },
     { name: 'About', href: '#about', icon: <Users size={18} /> },
-    { name: 'Dev', href: '#timeline', icon: <Zap size={18} /> },
-  ];
-
-  const timelineSteps = [
-    { id: 1, title: "Conceptualization", description: "Identifying the need for a dedicated ICT portal for FMNHS Grade 10 students.", icon: "💡" },
-    { id: 2, title: "Theme Selection", description: "Choosing the Navy Blue and Cyan professional technology aesthetic.", icon: "🎨" },
-    { id: 3, title: "Development", description: "Coding the frontend interface using React and integrating student resources.", icon: "⚡" },
-    { id: 4, title: "Deployment", description: "Making TechNest accessible to all Grade 10 ICT-TLE students.", icon: "🚀" }
+    { name: 'Team', href: '#team', icon: <GraduationCap size={18} /> },
   ];
 
   const fadeIn = {
@@ -30,15 +103,10 @@ const Welcome = () => {
     transition: { duration: 0.6 }
   };
 
-  const staggerContainer = {
-    initial: {},
-    whileInView: { transition: { staggerChildren: 0.1 } }
-  };
-
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-300 font-sans scroll-smooth overflow-x-hidden">
-      <Head title="Welcome to TechNest" />
-      {/* --- NAVIGATION --- */}
+    <div className="min-h-screen bg-[#020617] text-slate-300 font-sans scroll-smooth overflow-x-hidden selection:bg-cyan-500/30 selection:text-white">
+      <Head title="Welcome to TEchNest" />
+
       <nav className="bg-slate-950/80 sticky top-0 z-50 shadow-2xl backdrop-blur-xl border-b border-white/[0.05]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -47,9 +115,10 @@ const Welcome = () => {
                 <Cpu className="text-white w-5 h-5 md:w-6 md:h-6" />
               </div>
               <span className="text-xl md:text-2xl font-black tracking-tighter text-white italic">
-                Tech<span className="text-cyan-400">Nest</span>
+                TEch<span className="text-cyan-400">Nest</span>
               </span>
             </motion.div>
+
             <div className="hidden md:block">
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center space-x-1">
                 {navigation.map((item) => (
@@ -58,10 +127,11 @@ const Welcome = () => {
                   </a>
                 ))}
                 <Link href={route('login')} className="ml-4 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-6 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all active:scale-95 shadow-lg shadow-cyan-500/20">
-                  Enter Portal
+                  Log In
                 </Link>
               </motion.div>
             </div>
+
             <div className="md:hidden">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-xl bg-white/5 border border-white/10 text-cyan-400">
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -69,6 +139,7 @@ const Welcome = () => {
             </div>
           </div>
         </div>
+
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="md:hidden bg-slate-950 border-b border-white/10 p-6 space-y-3 overflow-hidden">
@@ -78,114 +149,190 @@ const Welcome = () => {
                 </a>
               ))}
               <Link href={route('login')} className="flex w-full justify-center bg-cyan-500 text-slate-950 py-4 rounded-2xl font-black uppercase text-xs tracking-widest italic shadow-xl">
-                Launch Portal
+                Log In
               </Link>
             </motion.div>
           )}
         </AnimatePresence>
       </nav>
-      {/* --- HERO SECTION --- */}
-      <header id="home" className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
+
+      <header id="home" className="relative min-h-[90vh] flex items-center justify-center px-6 overflow-hidden pt-20">
         <div className="absolute inset-0 bg-[#020617]">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.1)_0%,transparent_70%)]"></div>
+          <div className="absolute top-[-20%] right-[-10%] w-[70%] h-[70%] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+          <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
         </div>
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="max-w-4xl z-10 text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-8">
+
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="max-w-5xl z-10 text-center">
+          
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-8 animate-pulse">
             <Sparkles className="text-cyan-400 mr-2" size={14} />
-            <span className="text-cyan-400 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">Fort Magsaysay National High School</span>
+            <span className="text-cyan-400 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">
+              Grade 10 ICT-TLE Learning Hub
+            </span>
           </div>
-          <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-6 leading-tight text-white italic uppercase tracking-tighter">
-            Welcome <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">{userName}</span>
-            <br />
-            to TechNest!
+
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black mb-6 leading-tight text-white italic uppercase tracking-tighter">
+            From Classroom <br className="hidden md:block" />
+            Brainstorm to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">TEchNest</span>
           </h1>
-          <p className="text-slate-400 text-sm md:text-lg mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
-            The specialized digital hub for <span className="text-cyan-400 font-bold italic">Grade 10 ICT-TLE</span> students. Empowering future tech innovators with centralized resources.
+
+          <p className="text-slate-400 text-sm md:text-xl mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+             Building Our Grade 10 ICT-TLE Learning Hub. The journey from a simple idea to a fully functional student portal.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={route('login')} className="flex items-center justify-center bg-cyan-500 text-slate-950 px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest italic hover:bg-cyan-400 transition-all active:scale-95 shadow-2xl shadow-cyan-500/20">
-              <BookOpen className="mr-3" size={18} /> Explore Platform
-            </Link>
-            <Link href={route('login')} className="flex items-center justify-center bg-white/5 border border-white/10 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest italic hover:bg-white/10 transition-all">
-              View Modules <Zap className="ml-3" size={18} />
-            </Link>
+             <a href="#timeline" className="flex items-center justify-center bg-cyan-500 text-slate-950 px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest italic hover:bg-cyan-400 transition-all active:scale-95 shadow-2xl shadow-cyan-500/20">
+               View The Journey <ArrowRight className="ml-3" size={16} />
+             </a>
           </div>
         </motion.div>
       </header>
-      {/* --- FOCUS SECTION --- */}
-      <section id="about" className="py-20 md:py-32 px-6">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 md:gap-20 items-center">
-          <motion.div {...fadeIn} className="order-2 lg:order-1">
-            <div className="flex items-center mb-6">
-              <div className="w-12 h-1 bg-cyan-500 rounded-full"></div>
-              <span className="ml-4 text-cyan-500 font-black uppercase tracking-[0.3em] text-[10px]">Our Focus</span>
+
+      <section id="timeline" className="py-24 px-6 relative overflow-hidden">
+        <div className="max-w-5xl mx-auto relative z-10">
+          
+          <motion.div {...fadeIn} className="text-center mb-20">
+            <div className="inline-flex p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-lg mb-6 transform -rotate-3">
+                 <Clock className="text-white w-8 h-8" />
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-8 italic uppercase tracking-tight">
-              Specialized <span className="text-cyan-400 underline decoration-cyan-500/30">Curriculum</span>
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-4 uppercase italic tracking-tighter">
+              Timeline
             </h2>
-            <p className="text-slate-400 mb-10 text-base md:text-lg leading-relaxed">
-              TechNest is centralized exclusively for the <strong className="text-white">Grade 10 level</strong>. We prioritize the <strong className="text-cyan-400 italic">ICT components</strong> of TLE to ensure specialized learning for FMNHS students.
+            <p className="text-cyan-400 text-xs font-black uppercase tracking-[0.4em]">
+              From Idea to Reality
             </p>
-            <motion.div variants={staggerContainer} initial="initial" whileInView="whileInView" viewport={{ once: true }} className="grid sm:grid-cols-2 gap-4">
-              {['G10 Content', 'ICT Modules', 'FMNHS Hub', 'Collaboration'].map((text, i) => (
-                <motion.div variants={fadeIn} key={i} className="flex items-center p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-500/30 transition-all group">
-                  <div className="w-8 h-8 bg-cyan-500/10 rounded-lg flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all">
-                    <Check size={16} strokeWidth={4} />
-                  </div>
-                  <span className="ml-4 text-slate-300 font-black uppercase text-[10px] tracking-widest">{text}</span>
-                </motion.div>
-              ))}
-            </motion.div>
           </motion.div>
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="order-1 lg:order-2 grid grid-cols-2 gap-4 md:gap-8">
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-white/5 p-8 md:p-12 rounded-[2rem] text-center shadow-2xl">
-              <Laptop className="text-cyan-400 w-12 h-12 md:w-16 md:h-16 mx-auto mb-6" />
-              <h3 className="text-white font-black text-xl uppercase italic">ICT</h3>
-            </div>
-            <div className="bg-cyan-500 p-8 md:p-12 rounded-[2rem] text-center shadow-2xl mt-8">
-              <Cpu className="text-slate-950 w-12 h-12 md:w-16 md:h-16 mx-auto mb-6" />
-              <h3 className="text-slate-950 font-black text-xl uppercase italic">TLE</h3>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-      {/* --- TIMELINE SECTION --- */}
-      <section id="timeline" className="py-20 md:py-32 px-6 bg-slate-950/50">
-        <div className="max-w-4xl mx-auto">
-          <motion.div {...fadeIn} className="text-center mb-16 md:mb-24">
-            <Clock className="text-cyan-500 mx-auto mb-6" size={40} />
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4 uppercase italic">Timeline</h2>
-            <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em]">From idea to reality</p>
-          </motion.div>
+
           <div className="relative">
-            <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 h-full w-0.5 bg-white/10"></div>
-            {timelineSteps.map((step, index) => (
-              <motion.div key={step.id} initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className={`relative flex items-center mb-12 md:mb-20 ps-12 md:ps-0 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-                <div className={`w-full md:w-[45%] ${index % 2 === 0 ? 'md:text-right md:pe-12' : 'md:text-left md:ps-12'}`}>
-                  <div className="bg-white/5 backdrop-blur-md p-6 md:p-8 rounded-[2rem] border border-white/5 hover:border-cyan-500/30 transition-all">
-                    <div className="text-2xl mb-4">{step.icon}</div>
-                    <h3 className="text-cyan-400 font-black text-lg md:text-xl mb-2 uppercase italic tracking-tighter">{step.title}</h3>
-                    <p className="text-slate-500 text-xs md:text-sm leading-relaxed">{step.description}</p>
-                  </div>
-                </div>
-                <div className="absolute left-4 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center">
-                  <motion.div initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} className="w-4 h-4 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)] border-4 border-[#020617]"></motion.div>
-                </div>
-              </motion.div>
-            ))}
+            <div className="absolute left-6 md:left-1/2 transform md:-translate-x-1/2 h-full w-1 bg-gradient-to-b from-cyan-500/50 via-blue-600/50 to-transparent rounded-full"></div>
+
+            <TimelineItem 
+                number="01"
+                title="Conceptualization"
+                align="left"
+                content="Everything started with a simple class discussion and the challenge given by our Research teacher: create a student-made website that would help Grade 10 learners review and practice ICT and TLE topics. Our group sat together during class and brainstormed what we really needed — a fun, easy-to-use, cozy digital space made just for Grade 10 batch. We decided the website should feel like a “home” where we could safely learn. That’s when the name TEchNest was born — with “TEN” proudly standing for Grade 10."
+            />
+
+            <TimelineItem 
+                number="02"
+                title="Theme Selection"
+                align="right"
+                content="After picking the name, we talked about colors and vibe. We wanted something modern and techy but not cold or too serious — something that feels welcoming like a real nest. We finally chose deep blue as the main color (for trust and technology) combined with bright cyan/teal accents (for fresh energy and youthfulness). We also selected the Poppins font because it looks clean and modern. Everyone in the group agreed this combination felt “G10” — professional yet cool."
+            />
+
+             <TimelineItem 
+                number="03"
+                title="Development"
+                align="left"
+                content="This was the longest and most difficult part. We divided the work: some focused on the layout and design, others wrote the content, and a few handled the interactive parts. We built the website step by step: First, the basic structure (Home, About Us, Lessons). Then we applied our chosen colors and made it mobile-friendly. The most fun part was adding the quiz! We made simple multiple-choice questions about ICT topics, and programmed it to show scores with encouraging messages like “You nailed it!”"
+            />
+
+             <TimelineItem 
+                number="04"
+                title="Deployment & Testing"
+                align="right"
+                content="Once we were happy with how everything looked and worked, we prepared the final version. We tested TEchNest on different phones, laptops, and browsers to make sure it worked perfectly. We shared the prototype with some of our classmates and asked for their honest feedback. They gave us great suggestions, and we quickly made improvements. Finally, TEchNest was no longer just an idea — it became a real, working website made 100% by Grade 10 students for Grade 10 students."
+            />
           </div>
         </div>
       </section>
-      {/* --- FOOTER --- */}
-      <footer className="py-20 border-t border-white/5 text-center px-6">
-        <div className="flex items-center justify-center space-x-3 mb-8">
-          <div className="p-2 bg-cyan-500 rounded-lg"><Cpu className="text-slate-950 w-5 h-5" /></div>
-          <span className="text-2xl font-black text-white italic uppercase tracking-tighter">Tech<span className="text-cyan-400">Nest</span></span>
+
+      <section id="about" className="py-24 px-6 bg-slate-900/30 border-y border-white/5">
+        <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <motion.div {...fadeIn}>
+                    <h2 className="text-4xl md:text-5xl font-black text-white mb-8 uppercase italic tracking-tighter">
+                        About <span className="text-cyan-400">TEchNest</span>
+                    </h2>
+                    
+                    <div className="space-y-6 text-slate-400 text-sm md:text-base leading-relaxed font-medium">
+                        <p>
+                            <span className="text-white font-bold">TEchNest</span> is a student-led project created by the <span className="text-cyan-400">Grade 10 - Wakelet</span> class of Fort Magsaysay National High School under the ICT-TLE subject.
+                        </p>
+                        
+                        <p>We built this website to:</p>
+
+                        <ul className="space-y-4 mt-4">
+                            {[
+                                "Help our fellow G10 students review and master ICT & TLE topics anytime.",
+                                "Showcase what we've learned in HTML, CSS, and basic web design.",
+                                "Create a fun, safe space just for each ICT-TLE batch to learn and grow."
+                            ].map((item, index) => (
+                                <li key={index} className="flex items-start">
+                                    <div className="mr-4 mt-1 bg-cyan-500/20 p-1 rounded">
+                                        <Check size={14} className="text-cyan-400" strokeWidth={3} />
+                                    </div>
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </motion.div>
+
+                <motion.div {...fadeIn} className="relative">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-[2rem] blur opacity-20"></div>
+                    <div className="relative aspect-video bg-slate-800 rounded-[2rem] border border-white/10 flex items-center justify-center overflow-hidden group">
+                        <div className="text-center">
+                            <Users size={48} className="text-slate-600 mx-auto mb-4 group-hover:text-cyan-400 transition-colors" />
+                            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Researchers Group Photo</p>
+                        </div>
+                    </div>
+                </motion.div>
+
+            </div>
         </div>
-        <p className="text-slate-500 text-[9px] font-black uppercase tracking-[0.5em] leading-loose">
-          Grade 10 ICT-TLE Portal • {new Date().getFullYear()} <br />
-          Fort Magsaysay National High School
+      </section>
+
+      <section id="team" className="py-24 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+
+        <div className="max-w-6xl mx-auto relative z-10">
+            <motion.div {...fadeIn} className="text-center mb-20">
+                <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter mb-4">
+                    The <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Developers</span>
+                </h2>
+                <p className="text-slate-400 text-sm font-medium max-w-2xl mx-auto">
+                    Meet the team behind the screen. Grade 10 ICT-TLE Researchers and Advisers.
+                </p>
+            </motion.div>
+
+            <div className="mb-20">
+                 <h3 className="text-center text-slate-500 font-black uppercase tracking-[0.4em] text-xs mb-10 flex items-center justify-center gap-4">
+                    <span className="h-px w-12 bg-slate-700"></span>
+                    Advisers & Mentors
+                    <span className="h-px w-12 bg-slate-700"></span>
+                 </h3>
+                 <div className="flex flex-wrap justify-center gap-10 md:gap-16">
+                     <LaptopCard name="Ma'am [Name]" role="Research Adviser" type="teacher" />
+                     <LaptopCard name="Sir [Name]" role="Subject Teacher TLE" type="teacher" />
+                 </div>
+            </div>
+
+            <div>
+                <h3 className="text-center text-slate-500 font-black uppercase tracking-[0.4em] text-xs mb-10 flex items-center justify-center gap-4">
+                    <span className="h-px w-12 bg-slate-700"></span>
+                    Research Team
+                    <span className="h-px w-12 bg-slate-700"></span>
+                 </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+                    <LaptopCard name="Kim Huerta" role="Researcher" type="student" />
+                    <LaptopCard name="Gelo Sanchez" role="Researcher" type="student" />
+                    <LaptopCard name="Jericka Ante" role="Researcher" type="student" />
+                    <LaptopCard name="Job Mendoza" role="Researcher" type="student" />
+                </div>
+            </div>
+
+        </div>
+      </section>
+
+      <footer className="py-12 border-t border-white/5 text-center px-6 bg-slate-950">
+        <div className="flex items-center justify-center space-x-2 mb-4">
+          <Cpu className="text-cyan-500 w-5 h-5" />
+          <span className="text-xl font-black text-white italic uppercase tracking-tighter">TEch<span className="text-cyan-400">Nest</span></span>
+        </div>
+        <p className="text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em]">
+           Fort Magsaysay National High School • 2026
         </p>
       </footer>
     </div>
