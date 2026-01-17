@@ -24,7 +24,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN chmod -R 775 storage bootstrap/cache
 
 # Port 80 ang standard para sa NGINX sa container na ito
-EXPOSE 80
+EXPOSE 8081
 
 # Environment variables optimization
 ENV PHP_OPCACHE_ENABLE=1
