@@ -6,7 +6,8 @@ import {
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const LaptopCard = ({ name, role, type }) => {
+// 1. Updated Component to accept 'image' prop
+const LaptopCard = ({ name, role, type, image }) => {
     const wallpaperGradient = type === 'teacher' 
         ? 'from-blue-900/40 via-slate-900 to-purple-900/40' 
         : 'from-cyan-900/20 via-slate-900 to-teal-900/20';  
@@ -27,8 +28,17 @@ const LaptopCard = ({ name, role, type }) => {
                     <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
 
                     <div className="relative z-10 flex flex-col items-center">
-                        <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-3 shadow-inner border border-white/10 group-hover:scale-110 transition-transform">
-                            <Users size={24} className="text-white" />
+                        {/* Logic: Show Image if provided, else show Icon */}
+                        <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-3 shadow-inner border border-white/10 group-hover:scale-110 transition-transform overflow-hidden">
+                            {image ? (
+                                <img 
+                                    src={image} 
+                                    alt={name} 
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <Users size={24} className="text-white" />
+                            )}
                         </div>
                         
                         <h4 className="text-white font-bold text-sm md:text-base text-center tracking-tight drop-shadow-md">
@@ -177,7 +187,7 @@ const Welcome = () => {
           </h1>
 
           <p className="text-slate-400 text-sm md:text-xl mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
-             Building Our Grade 10 ICT-TLE Learning Hub. The journey from a simple idea to a fully functional student portal.
+              Building Our Grade 10 ICT-TLE Learning Hub. The journey from a simple idea to a fully functional student portal.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -304,8 +314,19 @@ const Welcome = () => {
                     <span className="h-px w-12 bg-slate-700"></span>
                  </h3>
                  <div className="flex flex-wrap justify-center gap-10 md:gap-16">
-                     <LaptopCard name="Ma'am [Name]" role="Research Adviser" type="teacher" />
-                     <LaptopCard name="Sir [Name]" role="Subject Teacher TLE" type="teacher" />
+                     {/* 2. Inserted images for the Advisers here */}
+                     <LaptopCard 
+                        name="Irma I. Trinidad" 
+                        role="Research Adviser" 
+                        type="teacher" 
+                        image="images/teacher2.png"
+                    />
+                     <LaptopCard 
+                        name="Maximo A. Luna" 
+                        role="Subject Teacher TLE" 
+                        type="teacher" 
+                        image="images/teacher1.png"
+                    />
                  </div>
             </div>
 
