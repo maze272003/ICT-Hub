@@ -337,10 +337,38 @@ const Welcome = () => {
                     <span className="h-px w-12 bg-slate-700"></span>
                  </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
-                    <LaptopCard name="Kim Huerta" role="Researcher" type="student" />
-                    <LaptopCard name="Gelo Sanchez" role="Researcher" type="student" />
-                    <LaptopCard name="Jericka Ante" role="Researcher" type="student" />
-                    <LaptopCard name="Job Mendoza" role="Researcher" type="student" />
+                    
+                    {/* Updated: Andrea Kim Huerta with Image */}
+                    <LaptopCard 
+                        name="Andrea Kim Huerta" 
+                        role="Researcher" 
+                        type="student" 
+                        image="images/andrea.jpg"
+                    />
+
+                    {/* No image yet for Gelo - defaults to Icon */}
+                    <LaptopCard 
+                        name="Gelo Sanchez" 
+                        role="Researcher" 
+                        type="student" 
+                        // image="images/gelo.jpg"  <-- Uncomment this line when you have the picture!
+                    />
+
+                    {/* Updated: Jericka Ante with Image */}
+                    <LaptopCard 
+                        name="Jericka Ante" 
+                        role="Researcher" 
+                        type="student" 
+                        image="images/jericka.jpg"
+                    />
+
+                    {/* No image yet for Job - defaults to Icon */}
+                    <LaptopCard 
+                        name="Job Mendoza" 
+                        role="Researcher" 
+                        type="student" 
+                        // image="images/job.jpg" <-- Uncomment this line when you have the picture!
+                    />
                 </div>
             </div>
 
