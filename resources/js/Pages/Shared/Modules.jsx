@@ -13,8 +13,10 @@ export default function Modules({ auth }) {
     const [selectedModule, setSelectedModule] = useState(null);
     const [selectedQuarter, setSelectedQuarter] = useState(null);
     const [showQuiz, setShowQuiz] = useState(false);
-    const [currentQuizModule] = useState('Q1M1'); 
-    
+    const [currentQuizModule] = useState('Q1M1');
+    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+
     // --- QUIZ & PERSISTENCE STATES ---
     const [userAnswers, setUserAnswers] = useState({});
     const [score, setScore] = useState(null);
@@ -96,12 +98,38 @@ export default function Modules({ auth }) {
     };
 
     const handleDownload = (fileName) => {
-        const link = document.createElement('a');
-        link.href = `/files/pr/Quarter 1/${fileName}`;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        setLoading(true);
+        try {
+            const link = document.createElement('a');
+            link.href = `/files/pr/Quarter 1/${fileName}`;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            alert('Error downloading file. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleBulkDownload = () => {
+        setLoading(true);
+        try {
+            quarterFiles.forEach(file => {
+                const link = document.createElement('a');
+                link.href = `/files/pr/Quarter 1/${file.name}`;
+                link.download = file.name;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        } catch (error) {
+            alert('Error downloading files. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     // --- DATA ---
@@ -201,8 +229,8 @@ export default function Modules({ auth }) {
                                 <div className="bg-gradient-to-br from-cyan-500/10 to-blue-600/10 border border-cyan-500/20 p-8 rounded-[2.5rem] flex flex-col items-center text-center">
                                     <div className="p-5 bg-cyan-500 rounded-2xl mb-6 shadow-lg shadow-cyan-500/20"><Archive className="text-slate-950 w-8 h-8" /></div>
                                     <h3 className="text-xl font-black text-white uppercase italic mb-2">Bulk Download</h3>
-                                    <button className="w-full bg-cyan-500 text-slate-950 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-cyan-400 flex items-center justify-center active:scale-95 transition-all">
-                                        <Download size={18} className="mr-2" /> Download All
+                                    <button onClick={handleBulkDownload} disabled={loading} className="w-full bg-cyan-500 text-slate-950 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-cyan-400 flex items-center justify-center active:scale-95 transition-all disabled:opacity-50">
+                                        <Download size={18} className="mr-2" /> {loading ? 'Downloading...' : 'Download All'}
                                     </button>
                                 </div>
 
@@ -216,9 +244,21 @@ export default function Modules({ auth }) {
                             </div>
 
                             <div className="pt-8">
-                                <h4 className="text-white font-black uppercase tracking-[0.3em] text-[10px] mb-6 flex items-center"><ChevronRight className="text-cyan-400 mr-2" size={16} /> Individual Resources</h4>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h4 className="text-white font-black uppercase tracking-[0.3em] text-[10px] flex items-center"><ChevronRight className="text-cyan-400 mr-2" size={16} /> Individual Resources</h4>
+                                    <div className="relative">
+                                        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" />
+                                        <input
+                                            type="text"
+                                            placeholder="Search files..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 w-64"
+                                        />
+                                    </div>
+                                </div>
                                 <div className="grid grid-cols-1 gap-3">
-                                    {quarterFiles.map((file, idx) => (
+                                    {quarterFiles.filter(file => file.name.toLowerCase().includes(searchTerm.toLowerCase())).map((file, idx) => (
                                         <div key={idx} className="bg-slate-900/40 border border-white/5 p-4 rounded-2xl flex items-center justify-between group hover:border-cyan-500/30 transition-all shadow-xl">
                                             <div className="flex items-center space-x-4">
                                                 <div className={`p-2 rounded-lg ${file.type === 'pdf' ? 'bg-red-500/10 text-red-400' : (file.type === 'pptx' ? 'bg-orange-500/10 text-orange-400' : 'bg-slate-500/10 text-slate-400')}`}><FileText size={18} /></div>

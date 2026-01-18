@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'; // Added useState
 import { Head, Link, useForm } from '@inertiajs/react';
-import { User, Lock, Cpu, ArrowLeft, Sparkles, AlertCircle, Mail, Hash } from 'lucide-react'; // Added Mail and Hash icons
+import { User, Lock, Cpu, ArrowLeft, Sparkles, AlertCircle, Mail, Hash, Eye, EyeOff } from 'lucide-react'; // Added Mail and Hash icons
 
 export default function Login({ status, canResetPassword }) {
     // State para sa pag-switch ng Login Method (Email vs LRN)
     const [loginMethod, setLoginMethod] = useState('email'); // 'email' or 'lrn'
+    const [showPassword, setShowPassword] = useState(false);
 
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         login: '', 
@@ -135,13 +136,20 @@ export default function Login({ status, canResetPassword }) {
                             <div className="relative group">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-cyan-400 transition-colors" size={18} />
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
-                                    className="w-full bg-slate-950/50 border border-white/5 text-white rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-cyan-500/40 focus:ring-4 focus:ring-cyan-500/5 transition-all placeholder:text-slate-700"
+                                    className="w-full bg-slate-950/50 border border-white/5 text-white rounded-xl py-4 pl-12 pr-12 focus:outline-none focus:border-cyan-500/40 focus:ring-4 focus:ring-cyan-500/5 transition-all placeholder:text-slate-700"
                                     placeholder="••••••••"
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-cyan-400 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
                             </div>
                             {errors.password && (
                                 <p className="mt-2 text-[10px] font-black text-red-400 flex items-center uppercase tracking-widest italic">
