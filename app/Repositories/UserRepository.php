@@ -24,10 +24,10 @@ class UserRepository implements UserRepositoryInterface
 
         if (isset($filters['search'])) {
             $search = $filters['search'];
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('lrn', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('lrn', 'like', "%{$search}%");
             });
         }
 
@@ -48,10 +48,10 @@ class UserRepository implements UserRepositoryInterface
 
         if (isset($filters['search'])) {
             $search = $filters['search'];
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('lrn', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('lrn', 'like', "%{$search}%");
             });
         }
 
@@ -108,34 +108,36 @@ class UserRepository implements UserRepositoryInterface
 
     /**
      * Get students with search functionality
+     * Matches Interface: returns LengthAwarePaginator
      */
-    public function getStudentsWithSearch(?string $search = null): Collection
+    public function getStudentsWithSearch(?string $search = null, int $perPage = 10): LengthAwarePaginator
     {
         $query = User::where('role', 'student');
 
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('lrn', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('lrn', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
-        return $query->get();
+        // Returns Paginator object
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
 
     /**
      * Get students with pagination and search
      */
-    public function getStudentsPaginated(int $perPage = 15, ?string $search = null): LengthAwarePaginator
+    public function getStudentsPaginated(int $perPage = 10, ?string $search = null): LengthAwarePaginator
     {
         $query = User::where('role', 'student');
 
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('lrn', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('lrn', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 

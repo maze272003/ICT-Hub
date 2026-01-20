@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class StudentController extends Controller
 {
     protected StudentService $studentService;
+
     protected UserRepositoryInterface $userRepository;
 
     public function __construct(StudentService $studentService, UserRepositoryInterface $userRepository)
@@ -27,12 +28,14 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $perPage = $request->input('per_page', 15);
+        $perPage = max(10, $request->input('per_page', 10));
 
+        // Ensure your StudentService::getStudentsWithSearch accepts $perPage 
+        // and passes it to UserRepository::getStudentsWithSearch
         $students = $this->studentService->getStudentsWithSearch($search, $perPage);
 
         return Inertia::render('Teacher/Students/Index', [
-            'students' => $students->items(), // Pass the actual data array instead of pagination object
+            'students' => $students,
             'filters' => $request->only(['search']),
         ]);
     }
@@ -52,7 +55,7 @@ class StudentController extends Controller
     {
         try {
             $student = $this->studentService->createStudent($request->all());
-            
+
             return redirect()->route('students.index')->with('success', 'Student created successfully.');
         } catch (ValidationException $e) {
             return redirect()->back()
@@ -76,7 +79,7 @@ class StudentController extends Controller
         }
 
         return Inertia::render('Teacher/Students/Edit', [
-            'student' => $student
+            'student' => $student,
         ]);
     }
 
@@ -92,7 +95,7 @@ class StudentController extends Controller
 
         try {
             $this->studentService->updateStudent($student, $request->all());
-            
+
             return redirect()->route('students.index')->with('success', 'Student updated successfully.');
         } catch (ValidationException $e) {
             return redirect()->back()
@@ -117,7 +120,7 @@ class StudentController extends Controller
 
         try {
             $this->studentService->deleteStudent($student);
-            
+
             return redirect()->back()->with('success', 'Student deleted successfully.');
         } catch (ValidationException $e) {
             return redirect()->back()

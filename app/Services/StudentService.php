@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class StudentService
 {
@@ -20,7 +20,7 @@ class StudentService
     /**
      * Get paginated students with search
      */
-    public function getStudentsWithSearch(?string $search = null, int $perPage = 15)
+    public function getStudentsWithSearch(?string $search = null, int $perPage = 10)
     {
         return $this->userRepository->getStudentsPaginated($perPage, $search);
     }
@@ -73,7 +73,7 @@ class StudentService
         // Security check: ensure the user is actually a student
         if ($student->role !== 'student') {
             throw ValidationException::withMessages([
-                'student' => ['Cannot delete non-student user.']
+                'student' => ['Cannot delete non-student user.'],
             ]);
         }
 

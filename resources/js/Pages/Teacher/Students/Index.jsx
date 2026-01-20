@@ -1,20 +1,33 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, router } from '@inertiajs/react'; // Import 'router'
+import { Head, Link, router } from '@inertiajs/react';
 import { UserPlus, Search, Mail, Edit2, Trash2, Users } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import debounce from 'lodash/debounce'; // Import debounce
 
-export default function Index({ auth, students = [], filters }) {
+export default function Index({ auth, students, filters }) {
     // State for search
     const [searchTerm, setSearchTerm] = useState(filters?.search || '');
 
-    // Handle Search on Enter Key
-    const handleSearch = (e) => {
-        if (e.key === 'Enter') {
-            router.get(route('students.index'), { search: searchTerm }, {
+    // 1. Create the Debounced Search Trigger
+    // We wraps this in useCallback so the function isn't recreated on every render
+    const debouncedSearch = useCallback(
+        debounce((query) => {
+            router.get(route('students.index'), { 
+                search: query,
+                page: 1 // Always reset to page 1 on new search
+            }, {
                 preserveState: true,
-                replace: true,
+                replace: true, // Prevents filling up browser history
             });
-        }
+        }, 500), // 500ms delay
+        []
+    );
+
+    // 2. Handle Input Change
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value); // Update UI immediately
+        debouncedSearch(value); // Trigger the delayed search
     };
 
     // Handle Delete
@@ -41,9 +54,9 @@ export default function Index({ auth, students = [], filters }) {
                         <input
                             type="text"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={handleSearch}
-                            placeholder="Search students (Press Enter)..."
+                            // UPDATED: Use the new handler here
+                            onChange={handleSearchChange} 
+                            placeholder="Search students..."
                             className="block w-full pl-11 pr-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-md text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500/40 transition-all shadow-2xl"
                         />
                     </div>
@@ -59,75 +72,100 @@ export default function Index({ auth, students = [], filters }) {
 
                 {/* --- STUDENTS TABLE --- */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="relative overflow-hidden bg-slate-900/40 backdrop-blur-2xl border border-white/5 shadow-2xl rounded-[2rem]">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-white/[0.02] border-b border-white/[0.05]">
-                                <th className="px-6 py-5 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em]">Student Details</th>
-                                <th className="px-6 py-5 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] hidden md:table-cell">LRN</th>
-                                <th className="px-6 py-5 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] hidden lg:table-cell">Contact</th>
-                                <th className="px-6 py-5 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/[0.02]">
-                            {students.length > 0 ? (
-                                students.map((student) => (
-                                    <tr key={student.id} className="group/row hover:bg-white/[0.02] transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center space-x-4">
-                                                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 flex items-center justify-center font-bold text-cyan-400">
-                                                    {student.name.charAt(0)}
+                    <div className="relative overflow-hidden bg-slate-900/40 backdrop-blur-2xl border border-white/5 shadow-2xl rounded-[2rem]">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-white/[0.02] border-b border-white/[0.05]">
+                                    <th className="px-6 py-5 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em]">Student Details</th>
+                                    <th className="px-6 py-5 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] hidden md:table-cell">LRN</th>
+                                    <th className="px-6 py-5 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] hidden lg:table-cell">Contact</th>
+                                    <th className="px-6 py-5 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/[0.02]">
+                                {students.data.length > 0 ? (
+                                    students.data.map((student) => (
+                                        <tr key={student.id} className="group/row hover:bg-white/[0.02] transition-colors">
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center space-x-4">
+                                                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 flex items-center justify-center font-bold text-cyan-400">
+                                                        {student.name.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-sm font-bold text-white tracking-tight">{student.name}</div>
+                                                        <div className="text-[10px] text-slate-500 uppercase font-medium md:hidden">LRN: {student.lrn}</div>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <div className="text-sm font-bold text-white tracking-tight">{student.name}</div>
-                                                    <div className="text-[10px] text-slate-500 uppercase font-medium md:hidden">LRN: {student.lrn}</div>
+                                            </td>
+                                            <td className="px-6 py-4 hidden md:table-cell text-slate-300 text-sm">
+                                                {student.lrn}
+                                            </td>
+                                            <td className="px-6 py-4 hidden lg:table-cell text-xs text-slate-400">
+                                                <Mail size={12} className="inline me-2 opacity-50" />
+                                                {student.email}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="flex justify-end space-x-2">
+                                                    <Link 
+                                                        href={route('students.edit', student.id)}
+                                                        className="p-2 text-slate-500 hover:text-cyan-400 transition-all"
+                                                    >
+                                                        <Edit2 size={16} />
+                                                    </Link>
+                                                    <button 
+                                                        onClick={() => handleDelete(student.id)}
+                                                        className="p-2 text-slate-500 hover:text-red-400 transition-all"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 hidden md:table-cell text-slate-300 text-sm">
-                                            {student.lrn}
-                                        </td>
-                                        <td className="px-6 py-4 hidden lg:table-cell text-xs text-slate-400">
-                                            <Mail size={12} className="inline me-2 opacity-50" />
-                                            {student.email}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end space-x-2">
-                                                {/* Edit Button */}
-                                                <Link 
-                                                    href={route('students.edit', student.id)}
-                                                    className="p-2 text-slate-500 hover:text-cyan-400 transition-all"
-                                                >
-                                                    <Edit2 size={16} />
-                                                </Link>
-                                                
-                                                {/* Delete Button */}
-                                                <button 
-                                                    onClick={() => handleDelete(student.id)}
-                                                    className="p-2 text-slate-500 hover:text-red-400 transition-all"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4" className="px-6 py-24 text-center">
+                                            <div className="flex flex-col items-center justify-center space-y-4">
+                                                <Users size={48} className="text-slate-600" />
+                                                <div className="space-y-1">
+                                                    <h5 className="text-white font-black uppercase tracking-widest">No Students Found</h5>
+                                                    <p className="text-slate-500 text-xs">The student directory is currently empty.</p>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="4" className="px-6 py-24 text-center">
-                                        <div className="flex flex-col items-center justify-center space-y-4">
-                                            <Users size={48} className="text-slate-600" />
-                                            <div className="space-y-1">
-                                                <h5 className="text-white font-black uppercase tracking-widest">No Students Found</h5>
-                                                <p className="text-slate-500 text-xs">The student directory is currently empty.</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Pagination - FIXED with conditional rendering */}
+                    {students.last_page > 1 && (
+                        <div className="mt-6 flex justify-center">
+                            <div className="flex space-x-1">
+                                {students.links.map((link, index) => (
+                                    link.url ? (
+                                        <Link
+                                            key={index}
+                                            href={link.url}
+                                            className={`px-3 py-2 text-sm rounded-lg transition-all ${
+                                                link.active
+                                                    ? 'bg-cyan-500 text-white shadow-lg'
+                                                    : 'bg-white/[0.02] text-slate-400 hover:bg-white/[0.05] hover:text-cyan-400'
+                                            }`}
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    ) : (
+                                        <span
+                                            key={index}
+                                            className="px-3 py-2 text-sm rounded-lg transition-all bg-white/[0.02] text-slate-600 opacity-50 cursor-not-allowed"
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    )
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AuthenticatedLayout>

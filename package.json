@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "framer-motion": "^12.25.0",
+        "lodash": "^4.17.21",
         "lucide-react": "^0.562.0"
     }
 }
