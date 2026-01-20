@@ -16,29 +16,34 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'lrn' => '105580090069',
-            'name' => 'Test student',
-            'email' => 'jmjonatas4@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'student',
+        // 1. Run the StudentSeeder (Generates 5000 fake students)
+        $this->call([
+            StudentSeeder::class,
         ]);
-        
+
+        // 2. Create specific hardcoded accounts (Admin/Teachers)
         User::factory()->create([
-            'lrn' => '105580090070',
-            'name' => 'Test teacher',
+            'lrn' => null, // Teachers might not need LRN
+            'name' => 'Test Teacher',
             'email' => 'teacher@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'teacher',
         ]);
-         User::factory()->create([
-            'lrn' => '105580090071',
-            'name' => 'Test teacher',
+        
+        User::factory()->create([
+            'lrn' => null,
+            'name' => 'Ace Teacher',
             'email' => 'acepadilla@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'teacher',
+        ]);
+
+        User::factory()->create([
+            'lrn' => '105580090069',
+            'name' => 'Test Student',
+            'email' => 'jmjonatas4@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'student',
         ]);
     }
 }
