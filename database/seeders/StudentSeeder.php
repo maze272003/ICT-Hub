@@ -19,7 +19,7 @@ class StudentSeeder extends Seeder
         // Generate 5000 random students efficiently
         $this->command->info('Creating 5000 students using Faker...');
 
-        User::factory()->count(5000)->create([
+        User::factory()->count(100)->create([
             'role' => 'student', // Ensure they are students
         ]);
         
