@@ -18,24 +18,31 @@ export default function Research({ auth }) {
     const [userAnswers, setUserAnswers] = useState({});
     const [score, setScore] = useState(null);
     const [isCompleted, setIsCompleted] = useState(false);
-    const quizId = 'Q1M1_Research'; // Unique ID for localStorage
+
+    // Dynamic Quiz ID based on selected quarter (e.g., "quiz_q1", "quiz_q3")
+    const quizId = selectedQuarter ? `quiz_${selectedQuarter.id}` : null;
 
     // --- EFFECT: LOAD QUIZ PROGRESS ---
     useEffect(() => {
-        // Reset quiz state when entering a new quarter (optional, currently tied to Q1)
-        if (selectedQuarter?.id === 'q1') {
-            const completionStatus = localStorage.getItem(`quiz_completed_${quizId}`);
-            if (completionStatus === 'true') setIsCompleted(true);
+        if (selectedQuarter && quizId) {
+            // Load progress specific to this quarter
+            const completionStatus = localStorage.getItem(`completed_${quizId}`);
+            const savedAnswers = localStorage.getItem(`answers_${quizId}`);
+            const savedScore = localStorage.getItem(`score_${quizId}`);
 
-            const savedAnswers = localStorage.getItem(`quiz_answers_${quizId}`);
-            if (savedAnswers) setUserAnswers(JSON.parse(savedAnswers));
-
-            const savedScore = localStorage.getItem(`quiz_score_${quizId}`);
-            if (savedScore) setScore(parseInt(savedScore));
+            setIsCompleted(completionStatus === 'true');
+            setUserAnswers(savedAnswers ? JSON.parse(savedAnswers) : {});
+            setScore(savedScore ? parseInt(savedScore) : null);
+        } else {
+            // Reset states when no quarter is selected
+            setIsCompleted(false);
+            setUserAnswers({});
+            setScore(null);
+            setShowQuiz(false);
         }
-    }, [selectedQuarter]);
+    }, [selectedQuarter, quizId]);
 
-    // --- DATA: QUIZ QUESTIONS (Based on your Learning Materials) ---
+    // --- DATA: QUIZ QUESTIONS ---
     const quizzes = {
         'q1': [
             { 
@@ -259,7 +266,8 @@ export default function Research({ auth }) {
         if (isCompleted) return; // Prevent changing answers if locked
         const updatedAnswers = { ...userAnswers, [questionIndex]: option };
         setUserAnswers(updatedAnswers);
-        localStorage.setItem(`quiz_answers_${quizId}`, JSON.stringify(updatedAnswers));
+        // Save answers specific to this quarter
+        localStorage.setItem(`answers_${quizId}`, JSON.stringify(updatedAnswers));
     };
 
     const handleSubmitQuiz = () => {
@@ -273,8 +281,10 @@ export default function Research({ auth }) {
 
         setScore(correctCount);
         setIsCompleted(true);
-        localStorage.setItem(`quiz_score_${quizId}`, correctCount.toString());
-        localStorage.setItem(`quiz_completed_${quizId}`, 'true');
+        
+        // Save result specific to this quarter
+        localStorage.setItem(`score_${quizId}`, correctCount.toString());
+        localStorage.setItem(`completed_${quizId}`, 'true');
         
         alert(`Quiz Submitted! Final Score: ${correctCount} / ${currentQuestions.length}. This module is now locked.`);
     };
