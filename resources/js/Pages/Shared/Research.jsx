@@ -19,13 +19,12 @@ export default function Research({ auth }) {
     const [score, setScore] = useState(null);
     const [isCompleted, setIsCompleted] = useState(false);
 
-    // Dynamic Quiz ID based on selected quarter (e.g., "quiz_q1", "quiz_q3")
+    // Dynamic Quiz ID based on selected quarter
     const quizId = selectedQuarter ? `quiz_${selectedQuarter.id}` : null;
 
     // --- EFFECT: LOAD QUIZ PROGRESS ---
     useEffect(() => {
         if (selectedQuarter && quizId) {
-            // Load progress specific to this quarter
             const completionStatus = localStorage.getItem(`completed_${quizId}`);
             const savedAnswers = localStorage.getItem(`answers_${quizId}`);
             const savedScore = localStorage.getItem(`score_${quizId}`);
@@ -34,7 +33,6 @@ export default function Research({ auth }) {
             setUserAnswers(savedAnswers ? JSON.parse(savedAnswers) : {});
             setScore(savedScore ? parseInt(savedScore) : null);
         } else {
-            // Reset states when no quarter is selected
             setIsCompleted(false);
             setUserAnswers({});
             setScore(null);
@@ -45,160 +43,40 @@ export default function Research({ auth }) {
     // --- DATA: QUIZ QUESTIONS ---
     const quizzes = {
         'q1': [
-            { 
-                q: "What is defined as a purposive scientific endeavor that results in the acquisition of new knowledge and gathers data to find solutions?", 
-                a: "Research", 
-                options: ["Research", "Hypothesis", "Conclusion", "Observation"] 
-            },
-            { 
-                q: "Which characteristic of research means that data is gathered through direct experience or observation?", 
-                a: "Empirical", 
-                options: ["Logical", "Empirical", "Cyclical", "Critical"] 
-            },
-            { 
-                q: "Research is considered ________ when it resolves a problem and generates a new problem to be solved.", 
-                a: "Cyclical", 
-                options: ["Analytical", "Methodical", "Cyclical", "Replicable"] 
-            },
-            { 
-                q: "What procedure involves collecting, analyzing, and mixing both quantitative and qualitative research in a single study?", 
-                a: "Mixed Method Research", 
-                options: ["Triangulation", "Mixed Method Research", "Pure Analysis", "Systematic Review"] 
-            },
-            { 
-                q: "Diaries, original documents, birth certificates, and autobiographies are examples of what type of source?", 
-                a: "Primary Sources", 
-                options: ["Secondary Sources", "Primary Sources", "Tertiary Sources", "Abstract Sources"] 
-            },
-            { 
-                q: "In evaluating sources, which term refers to data that is consistently used, tested, and produces the same results in different times?", 
-                a: "Reliability", 
-                options: ["Validity", "Practicality", "Reliability", "Authenticity"] 
-            },
-            { 
-                q: "What is the first phase in conducting the research process?", 
-                a: "Definition of the Problem", 
-                options: ["Data Gathering", "Review of Related Literature", "Definition of the Problem", "Data Analysis"] 
-            },
-            { 
-                q: "Which research design aims to describe subjects with higher accuracy and precision?", 
-                a: "Descriptive", 
-                options: ["Exploratory", "Descriptive", "Explanatory", "Experimental"] 
-            },
-            { 
-                q: "Which type of research aims for accurate, reliable explanations by constructing statistical models and using numbers?", 
-                a: "Quantitative Research", 
-                options: ["Qualitative Research", "Quantitative Research", "Historical Research", "Ethnographic Research"] 
-            },
-            { 
-                q: "Which type of research derives information from understanding human behavior, emotions, and beliefs in the form of words?", 
-                a: "Qualitative Research", 
-                options: ["Quantitative Research", "Qualitative Research", "Statistical Research", "Experimental Research"] 
-            }
+            { q: "What is defined as a purposive scientific endeavor that results in the acquisition of new knowledge?", a: "Research", options: ["Research", "Hypothesis", "Conclusion", "Observation"] },
+            { q: "Which characteristic of research means that data is gathered through direct experience?", a: "Empirical", options: ["Logical", "Empirical", "Cyclical", "Critical"] },
+            { q: "Research is considered ________ when it resolves a problem and generates a new problem.", a: "Cyclical", options: ["Analytical", "Methodical", "Cyclical", "Replicable"] },
+            { q: "What procedure involves collecting, analyzing, and mixing quantitative and qualitative research?", a: "Mixed Method Research", options: ["Triangulation", "Mixed Method Research", "Pure Analysis", "Systematic Review"] },
+            { q: "Diaries, original documents, and autobiographies are examples of what type of source?", a: "Primary Sources", options: ["Secondary Sources", "Primary Sources", "Tertiary Sources", "Abstract Sources"] },
+            { q: "In evaluating sources, what refers to data that produces the same results repeatedly?", a: "Reliability", options: ["Validity", "Practicality", "Reliability", "Authenticity"] },
+            { q: "What is the first phase in conducting the research process?", a: "Definition of the Problem", options: ["Data Gathering", "Review of Related Literature", "Definition of the Problem", "Data Analysis"] },
+            { q: "Which research design aims to describe subjects with higher accuracy?", a: "Descriptive", options: ["Exploratory", "Descriptive", "Explanatory", "Experimental"] },
+            { q: "Which type of research aims for accurate explanations using statistical models?", a: "Quantitative Research", options: ["Qualitative Research", "Quantitative Research", "Historical Research", "Ethnographic Research"] },
+            { q: "Which type of research derives information from understanding human behavior in words?", a: "Qualitative Research", options: ["Quantitative Research", "Qualitative Research", "Statistical Research", "Experimental Research"] }
         ],
         'q2': [
-            { 
-                q: "What type of question requires decision-making on research design, data collection, and analysis?", 
-                a: "Researchable question", 
-                options: ["Non-researchable question", "Researchable question", "Rhetorical question", "Hypothetical question"] 
-            },
-            { 
-                q: "Which type of hypothesis states that there is 'no difference' or no significant relationship between variables?", 
-                a: "Null Hypothesis", 
-                options: ["Alternative Hypothesis", "Null Hypothesis", "Cause and Effect Hypothesis", "Complex Hypothesis"] 
-            },
-            { 
-                q: "In an experiment, which variable is manipulated or changed by the researcher to observe its effect?", 
-                a: "Independent Variable", 
-                options: ["Dependent Variable", "Independent Variable", "Extraneous Variable", "Confounding Variable"] 
-            },
-            { 
-                q: "Which level of measurement describes variables with a true zero point, such as height, weight, and speed?", 
-                a: "Ratio Scale", 
-                options: ["Nominal Scale", "Ordinal Scale", "Interval Scale", "Ratio Scale"] 
-            },
-            { 
-                q: "What is considered the 'gold standard' research design involving manipulation, control, and randomization?", 
-                a: "Experimental Research Design", 
-                options: ["Descriptive Research Design", "Developmental Research Design", "Experimental Research Design", "Correlational Research Design"] 
-            },
-            { 
-                q: "Which sampling technique ensures that every unit in the population has an equal chance of being selected?", 
-                a: "Probability Sampling", 
-                options: ["Non-Probability Sampling", "Probability Sampling", "Quota Sampling", "Purposive Sampling"] 
-            },
-            { 
-                q: "Data that consists of names or categories without any intrinsic order (e.g., Male/Female) is classified as:", 
-                a: "Nominal Data", 
-                options: ["Ordinal Data", "Interval Data", "Ratio Data", "Nominal Data"] 
-            },
-            { 
-                q: "Which visual tool is used to reveal trends, relationships, and frequency distributions in data at a glance?", 
-                a: "Graph", 
-                options: ["Tabulation", "Graph", "Textual Presentation", "Raw Data"] 
-            },
-            { 
-                q: "What is the act of copying another person's ideas, words, or work and pretending they are your own?", 
-                a: "Plagiarism", 
-                options: ["Citation", "Paraphrasing", "Plagiarism", "Copyright"] 
-            },
-            { 
-                q: "In writing the Review of Related Literature (RRL), which format is commonly used for citing sources?", 
-                a: "APA Format", 
-                options: ["MLA Format", "APA Format", "Chicago Style", "IEEE Format"] 
-            }
+            { q: "What type of question requires decision-making on research design?", a: "Researchable question", options: ["Non-researchable question", "Researchable question", "Rhetorical question", "Hypothetical question"] },
+            { q: "Which hypothesis states 'no difference' between variables?", a: "Null Hypothesis", options: ["Alternative Hypothesis", "Null Hypothesis", "Cause and Effect Hypothesis", "Complex Hypothesis"] },
+            { q: "Which variable is manipulated by the researcher?", a: "Independent Variable", options: ["Dependent Variable", "Independent Variable", "Extraneous Variable", "Confounding Variable"] },
+            { q: "Which measurement scale has a true zero point?", a: "Ratio Scale", options: ["Nominal Scale", "Ordinal Scale", "Interval Scale", "Ratio Scale"] },
+            { q: "What is the 'gold standard' research design?", a: "Experimental Research Design", options: ["Descriptive Research Design", "Developmental Research Design", "Experimental Research Design", "Correlational Research Design"] },
+            { q: "Which sampling technique gives every unit an equal chance of selection?", a: "Probability Sampling", options: ["Non-Probability Sampling", "Probability Sampling", "Quota Sampling", "Purposive Sampling"] },
+            { q: "Data consisting of names without order (e.g., Male/Female) is:", a: "Nominal Data", options: ["Ordinal Data", "Interval Data", "Ratio Data", "Nominal Data"] },
+            { q: "Which visual tool reveals trends at a glance?", a: "Graph", options: ["Tabulation", "Graph", "Textual Presentation", "Raw Data"] },
+            { q: "Copying another person's work and pretending it is yours is called:", a: "Plagiarism", options: ["Citation", "Paraphrasing", "Plagiarism", "Copyright"] },
+            { q: "Which format is commonly used for citations in research?", a: "APA Format", options: ["MLA Format", "APA Format", "Chicago Style", "IEEE Format"] }
         ],
         'q3': [
-            { 
-                q: "What are the raw materials that an information system transforms into useful information?", 
-                a: "Data", 
-                options: ["Software", "Data", "Process", "Hardware"] 
-            },
-            { 
-                q: "According to Moore's Law, what is predicted to double every 18 to 24 months?", 
-                a: "Computer processing power", 
-                options: ["Internet speed", "Data storage costs", "Computer processing power", "Screen resolution"] 
-            },
-            { 
-                q: "Which SDLC phase involves creating a detailed blueprint of various processes and specifying hardware requirements?", 
-                a: "Systems Design", 
-                options: ["Systems Planning", "Systems Analysis", "Systems Design", "Systems Implementation"] 
-            },
-            { 
-                q: "Which SDLC model is described as a 'risk-driven' process model?", 
-                a: "Spiral Model", 
-                options: ["Waterfall Model", "Agile Model", "Iterative Model", "Spiral Model"] 
-            },
-            { 
-                q: "In the Traditional Approach to systems development, stages must be completed in what type of order?", 
-                a: "Sequential/Linear", 
-                options: ["Randomized", "Sequential/Linear", "Cyclical", "Parallel"] 
-            },
-            { 
-                q: "What industry standard modeling language is used in the Object-Oriented approach?", 
-                a: "Unified Modeling Language (UML)", 
-                options: ["Hypertext Markup Language (HTML)", "Unified Modeling Language (UML)", "Data Flow Diagram (DFD)", "Structured Query Language (SQL)"] 
-            },
-            { 
-                q: "Which type of feasibility study involves a cost/benefit analysis to determine if a project is worth the investment?", 
-                a: "Economic Feasibility", 
-                options: ["Technical Feasibility", "Operational Feasibility", "Economic Feasibility", "Scheduling Feasibility"] 
-            },
-            { 
-                q: "What graphical technique is used to show how data moves through an information system without showing program logic?", 
-                a: "Data Flow Diagram (DFD)", 
-                options: ["Flowchart", "Use Case Diagram", "Data Flow Diagram (DFD)", "Class Diagram"] 
-            },
-            { 
-                q: "In a DFD, what do you call a process that has input but produces no output?", 
-                a: "Black hole", 
-                options: ["Miracle", "Black hole", "Gray hole", "Data store"] 
-            },
-            { 
-                q: "Which component of an Information System consists of the programs that control hardware (e.g., Windows, Android)?", 
-                a: "Software", 
-                options: ["People", "Process", "Software", "Database"] 
-            }
+            { q: "What are the raw materials that an information system transforms into useful information?", a: "Data", options: ["Software", "Data", "Process", "Hardware"] },
+            { q: "According to Moore's Law, what doubles every 18 to 24 months?", a: "Computer processing power", options: ["Internet speed", "Data storage costs", "Computer processing power", "Screen resolution"] },
+            { q: "Which SDLC phase involves creating a blueprint and specifying hardware?", a: "Systems Design", options: ["Systems Planning", "Systems Analysis", "Systems Design", "Systems Implementation"] },
+            { q: "Which SDLC model is described as 'risk-driven'?", a: "Spiral Model", options: ["Waterfall Model", "Agile Model", "Iterative Model", "Spiral Model"] },
+            { q: "In the Traditional Approach, stages are completed in what order?", a: "Sequential/Linear", options: ["Randomized", "Sequential/Linear", "Cyclical", "Parallel"] },
+            { q: "What modeling language is used in the Object-Oriented approach?", a: "Unified Modeling Language (UML)", options: ["HTML", "Unified Modeling Language (UML)", "DFD", "SQL"] },
+            { q: "Which feasibility study involves cost/benefit analysis?", a: "Economic Feasibility", options: ["Technical Feasibility", "Operational Feasibility", "Economic Feasibility", "Scheduling Feasibility"] },
+            { q: "What diagram shows data movement without program logic?", a: "Data Flow Diagram (DFD)", options: ["Flowchart", "Use Case Diagram", "Data Flow Diagram (DFD)", "Class Diagram"] },
+            { q: "In a DFD, a process with input but no output is called:", a: "Black hole", options: ["Miracle", "Black hole", "Gray hole", "Data store"] },
+            { q: "Which component consists of programs controlling hardware?", a: "Software", options: ["People", "Process", "Software", "Database"] }
         ]
     };
 
@@ -207,7 +85,7 @@ export default function Research({ auth }) {
         {
             id: 'q1',
             title: 'Quarter 1',
-            folderName: 'Quarter 1',
+            folderName: 'Quarter 1', 
             description: 'Introduction to Research, Characteristics, and Ethics',
             status: 'Unlocked',
             hasQuiz: true,
@@ -226,7 +104,7 @@ export default function Research({ auth }) {
         {
             id: 'q2',
             title: 'Quarter 2',
-            folderName: 'Quarter 2',
+            folderName: 'Quarter 2', 
             description: 'Research Problems, Feasibility, and Sampling',
             status: 'Unlocked',
             hasQuiz: true,
@@ -234,12 +112,12 @@ export default function Research({ auth }) {
                 'week-1-Research-Problem-2.pdf',
                 'WEEK-2-1 (1).pdf',
                 'Week-3-1 (2).pdf',
-                'Week3_Sampling_EdnalynOrola-2 (1).pdf',
-                'WEEK4-1-1.pdf',
-                'WEEK5-1-1.pdf',
                 'WEEK-5-FEASIBILITY-STUDY-IN-INFORMATION-SYSTEM.pdf',
                 'WEEK-21-1.pdf',
                 'WEEK-22-1.pdf',
+                'Week3_Sampling_EdnalynOrola-2 (1).pdf',
+                'WEEK4-1-1.pdf',
+                'WEEK5-1-1.pdf',
             ]
         },
         {
@@ -252,8 +130,8 @@ export default function Research({ auth }) {
             files: [
                 'WEEK-1_APPROACHES-TO-SYSTEMS-DEVELOPMENT_BADUA.pdf',
                 'week-2-what-is-an-information-system.pdf',
-                'Week-3-Systems-Development-Life-Cycle.pdf',
                 'Week-3-Systems-Development-Life-Cycle-2.docx.pdf',
+                'Week-3-Systems-Development-Life-Cycle.pdf',
                 'WEEK-4-Traditional-VS-Object-Oriented-Approach.pdf',
                 'WEEK-5-FEASIBILITY-STUDY-IN-INFORMATION-SYSTEM.pdf',
                 'WEEK6-DATAFLOW-DIAGRAM.pdf',
@@ -261,40 +139,7 @@ export default function Research({ auth }) {
         }
     ];
 
-    // --- HANDLERS: QUIZ ---
-    const handleSelectOption = (questionIndex, option) => {
-        if (isCompleted) return; // Prevent changing answers if locked
-        const updatedAnswers = { ...userAnswers, [questionIndex]: option };
-        setUserAnswers(updatedAnswers);
-        // Save answers specific to this quarter
-        localStorage.setItem(`answers_${quizId}`, JSON.stringify(updatedAnswers));
-    };
-
-    const handleSubmitQuiz = () => {
-        if (isCompleted) return;
-
-        const currentQuestions = quizzes[selectedQuarter.id];
-        let correctCount = 0;
-        currentQuestions.forEach((item, index) => {
-            if (userAnswers[index] === item.a) correctCount++;
-        });
-
-        setScore(correctCount);
-        setIsCompleted(true);
-        
-        // Save result specific to this quarter
-        localStorage.setItem(`score_${quizId}`, correctCount.toString());
-        localStorage.setItem(`completed_${quizId}`, 'true');
-        
-        alert(`Quiz Submitted! Final Score: ${correctCount} / ${currentQuestions.length}. This module is now locked.`);
-    };
-
-    // --- HANDLERS: FILES ---
-    const handleFileView = (fileName) => {
-        const fileUrl = `/files/module/pr/${selectedQuarter.folderName}/${fileName}`;
-        window.open(fileUrl, '_blank');
-    };
-
+    // --- HANDLERS: DOWNLOAD ---
     const handleDownload = (fileName) => {
         try {
             const link = document.createElement('a');
@@ -306,6 +151,54 @@ export default function Research({ auth }) {
         } catch (error) {
             alert('Error downloading file.');
         }
+    };
+
+    // --- HANDLERS: VIEW FILE (UPDATED) ---
+    const handleFileView = (fileName) => {
+        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        
+        // Construct the full URL based on your file structure
+        const fileUrl = `${window.location.origin}/files/module/pr/${selectedQuarter.folderName}/${fileName}`;
+        
+        // Determine file type by extension
+        const type = fileName.split('.').pop().toLowerCase();
+
+        if (type === 'pptx') {
+            if (isLocal) {
+                // Pag local, i-download na lang muna para hindi mag-error ang Google preview
+                alert("Note: PPTX Preview is only available when the site is live. Downloading file instead.");
+                handleDownload(fileName);
+            } else {
+                // Pag live na, ito ang gagana
+                const previewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+                window.open(previewUrl, '_blank');
+            }
+        } else {
+            // For PDFs and other files
+            window.open(fileUrl, '_blank');
+        }
+    };
+
+    // --- HANDLERS: QUIZ ---
+    const handleSelectOption = (questionIndex, option) => {
+        if (isCompleted) return;
+        const updatedAnswers = { ...userAnswers, [questionIndex]: option };
+        setUserAnswers(updatedAnswers);
+        localStorage.setItem(`answers_${quizId}`, JSON.stringify(updatedAnswers));
+    };
+
+    const handleSubmitQuiz = () => {
+        if (isCompleted) return;
+        const currentQuestions = quizzes[selectedQuarter.id];
+        let correctCount = 0;
+        currentQuestions.forEach((item, index) => {
+            if (userAnswers[index] === item.a) correctCount++;
+        });
+        setScore(correctCount);
+        setIsCompleted(true);
+        localStorage.setItem(`score_${quizId}`, correctCount.toString());
+        localStorage.setItem(`completed_${quizId}`, 'true');
+        alert(`Quiz Submitted! Final Score: ${correctCount} / ${currentQuestions.length}. This module is now locked.`);
     };
 
     return (
@@ -392,13 +285,9 @@ export default function Research({ auth }) {
                             exit={{ opacity: 0, x: 50 }}
                             className="space-y-6"
                         >
-                            {/* Actions Bar */}
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <button 
-                                    onClick={() => {
-                                        setSelectedQuarter(null);
-                                        setSearchTerm('');
-                                    }} 
+                                    onClick={() => { setSelectedQuarter(null); setSearchTerm(''); }} 
                                     className="text-xs font-black uppercase tracking-widest text-cyan-400 flex items-center hover:text-white transition-colors group w-fit"
                                 >
                                     <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" /> 
@@ -417,7 +306,6 @@ export default function Research({ auth }) {
                                         />
                                     </div>
                                     
-                                    {/* Quiz Button (Only shows if quarter has a quiz) */}
                                     {selectedQuarter.hasQuiz && (
                                         <button 
                                             onClick={() => setShowQuiz(true)}
@@ -430,7 +318,6 @@ export default function Research({ auth }) {
                                 </div>
                             </div>
 
-                            {/* Files Grid */}
                             <div className="grid grid-cols-1 gap-3 pb-20">
                                 {selectedQuarter.files
                                     .filter(file => file.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -457,18 +344,10 @@ export default function Research({ auth }) {
                                         </div>
 
                                         <div className="flex items-center gap-2 pl-4 border-l border-white/5">
-                                            <button 
-                                                onClick={() => handleFileView(file)}
-                                                className="p-2 text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all" 
-                                                title="Preview"
-                                            >
+                                            <button onClick={() => handleFileView(file)} className="p-2 text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all" title="Preview">
                                                 <Eye size={18} />
                                             </button>
-                                            <button 
-                                                onClick={() => handleDownload(file)}
-                                                className="p-2 text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all" 
-                                                title="Download"
-                                            >
+                                            <button onClick={() => handleDownload(file)} className="p-2 text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all" title="Download">
                                                 <Download size={18} />
                                             </button>
                                         </div>
@@ -488,12 +367,8 @@ export default function Research({ auth }) {
                             className="max-w-3xl mx-auto space-y-8 pb-40 pt-4"
                         >
                             <div className="flex flex-col md:flex-row justify-between items-center border-b border-white/5 pb-6 gap-4">
-                                <button 
-                                    onClick={() => setShowQuiz(false)} 
-                                    className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white flex items-center group"
-                                >
-                                    <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" /> 
-                                    Exit Quiz
+                                <button onClick={() => setShowQuiz(false)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white flex items-center group">
+                                    <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" /> Exit Quiz
                                 </button>
                                 {isCompleted && (
                                     <div className="flex items-center bg-cyan-500/10 border border-cyan-500/30 px-6 py-2 rounded-2xl animate-pulse">
@@ -509,22 +384,12 @@ export default function Research({ auth }) {
                                 {quizzes[selectedQuarter.id]?.map((item, index) => (
                                     <div key={index} className="space-y-6">
                                         <div className="flex items-start space-x-4">
-                                            <span className="text-cyan-500 font-black italic text-2xl">
-                                                {index + 1 < 10 ? `0${index + 1}` : index + 1}.
-                                            </span>
+                                            <span className="text-cyan-500 font-black italic text-2xl">{index + 1 < 10 ? `0${index + 1}` : index + 1}.</span>
                                             <p className="text-lg text-white font-medium leading-relaxed">{item.q}</p>
                                         </div>
                                         <div className="grid grid-cols-1 gap-3 pl-12">
                                             {item.options.map((opt, oIdx) => (
-                                                <button 
-                                                    key={oIdx} 
-                                                    onClick={() => handleSelectOption(index, opt)} 
-                                                    className={`w-full text-left p-5 rounded-2xl border transition-all text-sm font-medium ${
-                                                        userAnswers[index] === opt 
-                                                        ? 'bg-cyan-500 border-cyan-400 text-slate-950 shadow-lg shadow-cyan-500/30 scale-[1.02]' 
-                                                        : 'bg-white/5 border-white/5 text-slate-400 hover:border-cyan-500/50'
-                                                    }`}
-                                                >
+                                                <button key={oIdx} onClick={() => handleSelectOption(index, opt)} className={`w-full text-left p-5 rounded-2xl border transition-all text-sm font-medium ${userAnswers[index] === opt ? 'bg-cyan-500 border-cyan-400 text-slate-950 shadow-lg shadow-cyan-500/30 scale-[1.02]' : 'bg-white/5 border-white/5 text-slate-400 hover:border-cyan-500/50'}`}>
                                                     {opt}
                                                 </button>
                                             ))}
@@ -535,10 +400,7 @@ export default function Research({ auth }) {
 
                             <div className="fixed bottom-0 left-0 right-0 p-8 bg-slate-950/90 backdrop-blur-xl border-t border-white/5 flex justify-center z-50">
                                 {!isCompleted ? (
-                                    <button 
-                                        onClick={handleSubmitQuiz} 
-                                        className="bg-cyan-500 text-slate-950 px-16 py-4 rounded-2xl font-black uppercase text-xs tracking-widest italic shadow-2xl shadow-cyan-500/30 active:scale-95 transition-all"
-                                    >
+                                    <button onClick={handleSubmitQuiz} className="bg-cyan-500 text-slate-950 px-16 py-4 rounded-2xl font-black uppercase text-xs tracking-widest italic shadow-2xl shadow-cyan-500/30 active:scale-95 transition-all">
                                         Final Submit & Lock Module
                                     </button>
                                 ) : (
