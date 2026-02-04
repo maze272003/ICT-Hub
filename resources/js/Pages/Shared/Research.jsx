@@ -1,19 +1,97 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { 
     FileText, Search, ChevronRight, 
     ArrowLeft, Download, Eye, FolderOpen, 
-    Layers, BookOpen 
+    Layers, BookOpen, Trophy, CheckCircle2, Lock 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Research({ auth }) {
-    // --- STATE MANAGEMENT ---
+    // --- APP STATES ---
     const [selectedQuarter, setSelectedQuarter] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showQuiz, setShowQuiz] = useState(false);
+    
+    // --- QUIZ & PERSISTENCE STATES ---
+    const [userAnswers, setUserAnswers] = useState({});
+    const [score, setScore] = useState(null);
+    const [isCompleted, setIsCompleted] = useState(false);
+    const quizId = 'Q1M1_Research'; // Unique ID for localStorage
 
-    // --- DATA: FILE STRUCTURE (Based on your image) ---
+    // --- EFFECT: LOAD QUIZ PROGRESS ---
+    useEffect(() => {
+        // Reset quiz state when entering a new quarter (optional, currently tied to Q1)
+        if (selectedQuarter?.id === 'q1') {
+            const completionStatus = localStorage.getItem(`quiz_completed_${quizId}`);
+            if (completionStatus === 'true') setIsCompleted(true);
+
+            const savedAnswers = localStorage.getItem(`quiz_answers_${quizId}`);
+            if (savedAnswers) setUserAnswers(JSON.parse(savedAnswers));
+
+            const savedScore = localStorage.getItem(`quiz_score_${quizId}`);
+            if (savedScore) setScore(parseInt(savedScore));
+        }
+    }, [selectedQuarter]);
+
+    // --- DATA: QUIZ QUESTIONS (Based on your Learning Materials) ---
+    const quizzes = {
+        'q1': [
+            { 
+                q: "What is defined as a purposive scientific endeavor that results in the acquisition of new knowledge and gathers data to find solutions?", 
+                a: "Research", 
+                options: ["Research", "Hypothesis", "Conclusion", "Observation"] 
+            },
+            { 
+                q: "Which characteristic of research means that data is gathered through direct experience or observation?", 
+                a: "Empirical", 
+                options: ["Logical", "Empirical", "Cyclical", "Critical"] 
+            },
+            { 
+                q: "Research is considered ________ when it resolves a problem and generates a new problem to be solved.", 
+                a: "Cyclical", 
+                options: ["Analytical", "Methodical", "Cyclical", "Replicable"] 
+            },
+            { 
+                q: "What procedure involves collecting, analyzing, and mixing both quantitative and qualitative research in a single study?", 
+                a: "Mixed Method Research", 
+                options: ["Triangulation", "Mixed Method Research", "Pure Analysis", "Systematic Review"] 
+            },
+            { 
+                q: "Diaries, original documents, birth certificates, and autobiographies are examples of what type of source?", 
+                a: "Primary Sources", 
+                options: ["Secondary Sources", "Primary Sources", "Tertiary Sources", "Abstract Sources"] 
+            },
+            { 
+                q: "In evaluating sources, which term refers to data that is consistently used, tested, and produces the same results in different times?", 
+                a: "Reliability", 
+                options: ["Validity", "Practicality", "Reliability", "Authenticity"] 
+            },
+            { 
+                q: "What is the first phase in conducting the research process?", 
+                a: "Definition of the Problem", 
+                options: ["Data Gathering", "Review of Related Literature", "Definition of the Problem", "Data Analysis"] 
+            },
+            { 
+                q: "Which research design aims to describe subjects with higher accuracy and precision?", 
+                a: "Descriptive", 
+                options: ["Exploratory", "Descriptive", "Explanatory", "Experimental"] 
+            },
+            { 
+                q: "Which type of research aims for accurate, reliable explanations by constructing statistical models and using numbers?", 
+                a: "Quantitative Research", 
+                options: ["Qualitative Research", "Quantitative Research", "Historical Research", "Ethnographic Research"] 
+            },
+            { 
+                q: "Which type of research derives information from understanding human behavior, emotions, and beliefs in the form of words?", 
+                a: "Qualitative Research", 
+                options: ["Quantitative Research", "Qualitative Research", "Statistical Research", "Experimental Research"] 
+            }
+        ]
+    };
+
+    // --- DATA: FILE STRUCTURE ---
     const quartersData = [
         {
             id: 'q1',
@@ -21,6 +99,7 @@ export default function Research({ auth }) {
             folderName: 'Quarter 1',
             description: 'Introduction to Research, Characteristics, and Ethics',
             status: 'Unlocked',
+            hasQuiz: true,
             files: [
                 '10-IT_-_RESEARCH-_WEEK-1-introduction-to-research_BABAC_.pdf',
                 '10-IT_-_RESEARCH_WEEK-2-GOALS-od-Research_B.-BABAC.pdf',
@@ -39,6 +118,7 @@ export default function Research({ auth }) {
             folderName: 'Quarter 2',
             description: 'Research Problems, Feasibility, and Sampling',
             status: 'Unlocked',
+            hasQuiz: false,
             files: [
                 'week-1-Research-Problem-2.pdf',
                 'WEEK-2-1 (1).pdf',
@@ -57,6 +137,7 @@ export default function Research({ auth }) {
             folderName: 'Quarter 3',
             description: 'Systems Development, SDLC, and Dataflow',
             status: 'Unlocked',
+            hasQuiz: false,
             files: [
                 'WEEK-1_APPROACHES-TO-SYSTEMS-DEVELOPMENT_BADUA.pdf',
                 'week-2-what-is-an-information-system.pdf',
@@ -69,9 +150,33 @@ export default function Research({ auth }) {
         }
     ];
 
-    // --- HANDLERS ---
+    // --- HANDLERS: QUIZ ---
+    const handleSelectOption = (questionIndex, option) => {
+        if (isCompleted) return; // Prevent changing answers if locked
+        const updatedAnswers = { ...userAnswers, [questionIndex]: option };
+        setUserAnswers(updatedAnswers);
+        localStorage.setItem(`quiz_answers_${quizId}`, JSON.stringify(updatedAnswers));
+    };
+
+    const handleSubmitQuiz = () => {
+        if (isCompleted) return;
+
+        const currentQuestions = quizzes[selectedQuarter.id];
+        let correctCount = 0;
+        currentQuestions.forEach((item, index) => {
+            if (userAnswers[index] === item.a) correctCount++;
+        });
+
+        setScore(correctCount);
+        setIsCompleted(true);
+        localStorage.setItem(`quiz_score_${quizId}`, correctCount.toString());
+        localStorage.setItem(`quiz_completed_${quizId}`, 'true');
+        
+        alert(`Quiz Submitted! Final Score: ${correctCount} / ${currentQuestions.length}. This module is now locked.`);
+    };
+
+    // --- HANDLERS: FILES ---
     const handleFileView = (fileName) => {
-        // Path based on your image structure: public/files/module/pr/Quarter X/...
         const fileUrl = `/files/module/pr/${selectedQuarter.folderName}/${fileName}`;
         window.open(fileUrl, '_blank');
     };
@@ -92,29 +197,36 @@ export default function Research({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={selectedQuarter ? `${selectedQuarter.title} Materials` : "Practical Research Repository"}
+            header={
+                showQuiz 
+                ? `Assessment: ${selectedQuarter?.title}` 
+                : (selectedQuarter ? `${selectedQuarter.title} Materials` : "Practical Research Repository")
+            }
         >
             <Head title="Research Files" />
 
             <div className="max-w-7xl mx-auto space-y-6">
                 
-                {/* Header Decoration */}
-                <div className="relative overflow-hidden rounded-[2rem] bg-slate-900/40 border border-white/5 p-8 mb-8">
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]"></div>
-                    <div className="relative z-10">
-                        <h2 className="text-2xl font-black text-white italic uppercase tracking-tight flex items-center gap-3">
-                            <BookOpen className="text-cyan-400" /> 
-                            {selectedQuarter ? selectedQuarter.title : "Research Modules"}
-                        </h2>
-                        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-2">
-                            {selectedQuarter ? selectedQuarter.description : "Select a quarter to access learning materials"}
-                        </p>
+                {/* --- HEADER --- */}
+                {!showQuiz && (
+                    <div className="relative overflow-hidden rounded-[2rem] bg-slate-900/40 border border-white/5 p-8 mb-8">
+                        <div className="absolute -top-24 -right-24 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]"></div>
+                        <div className="relative z-10">
+                            <h2 className="text-2xl font-black text-white italic uppercase tracking-tight flex items-center gap-3">
+                                <BookOpen className="text-cyan-400" /> 
+                                {selectedQuarter ? selectedQuarter.title : "Research Modules"}
+                            </h2>
+                            <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-2">
+                                {selectedQuarter ? selectedQuarter.description : "Select a quarter to access learning materials"}
+                            </p>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <AnimatePresence mode="wait">
+                    
                     {/* --- VIEW 1: QUARTER SELECTION --- */}
-                    {!selectedQuarter ? (
+                    {!selectedQuarter && (
                         <motion.div 
                             key="quarters-list"
                             initial={{ opacity: 0, y: 20 }} 
@@ -132,24 +244,22 @@ export default function Research({ auth }) {
                                         <div className="w-12 h-12 bg-cyan-500/10 rounded-2xl flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 transition-transform">
                                             <FolderOpen size={24} />
                                         </div>
-                                        
                                         <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">
                                             {quarter.title}
                                         </h3>
-                                        
                                         <div className="flex items-center gap-2 mb-6">
                                             <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400 border border-white/5">
                                                 {quarter.files.length} Files
                                             </span>
-                                            <span className="px-3 py-1 bg-cyan-500/10 rounded-full text-[10px] font-black uppercase tracking-widest text-cyan-400 border border-cyan-500/20">
-                                                {quarter.status}
-                                            </span>
+                                            {quarter.hasQuiz && (
+                                                <span className="px-3 py-1 bg-cyan-500/10 rounded-full text-[10px] font-black uppercase tracking-widest text-cyan-400 border border-cyan-500/20">
+                                                    Quiz Available
+                                                </span>
+                                            )}
                                         </div>
-
                                         <p className="text-slate-500 text-xs leading-relaxed mb-8">
                                             {quarter.description}
                                         </p>
-
                                         <div className="absolute bottom-8 right-8 text-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0">
                                             <ChevronRight size={24} />
                                         </div>
@@ -157,8 +267,10 @@ export default function Research({ auth }) {
                                 </button>
                             ))}
                         </motion.div>
-                    ) : (
-                        /* --- VIEW 2: FILE LIST --- */
+                    )}
+
+                    {/* --- VIEW 2: FILE LIST --- */}
+                    {selectedQuarter && !showQuiz && (
                         <motion.div 
                             key="file-list"
                             initial={{ opacity: 0, x: 50 }} 
@@ -166,7 +278,7 @@ export default function Research({ auth }) {
                             exit={{ opacity: 0, x: 50 }}
                             className="space-y-6"
                         >
-                            {/* Navigation & Search Bar */}
+                            {/* Actions Bar */}
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <button 
                                     onClick={() => {
@@ -179,15 +291,28 @@ export default function Research({ auth }) {
                                     Back to Quarters
                                 </button>
 
-                                <div className="relative w-full md:w-96">
-                                    <Search size={16} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search documents..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full bg-slate-900/60 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
-                                    />
+                                <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                                    <div className="relative w-full md:w-64">
+                                        <Search size={16} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500" />
+                                        <input
+                                            type="text"
+                                            placeholder="Search documents..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="w-full bg-slate-900/60 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
+                                        />
+                                    </div>
+                                    
+                                    {/* Quiz Button (Only shows if quarter has a quiz) */}
+                                    {selectedQuarter.hasQuiz && (
+                                        <button 
+                                            onClick={() => setShowQuiz(true)}
+                                            className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center whitespace-nowrap"
+                                        >
+                                            <CheckCircle2 size={16} className="mr-2" />
+                                            {isCompleted ? `View Result (${score}/${quizzes[selectedQuarter.id].length})` : 'Take Assessment'}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -235,11 +360,76 @@ export default function Research({ auth }) {
                                         </div>
                                     </motion.div>
                                 ))}
+                            </div>
+                        </motion.div>
+                    )}
 
-                                {selectedQuarter.files.filter(file => file.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
-                                    <div className="text-center py-12 text-slate-500">
-                                        <Layers size={48} className="mx-auto mb-4 opacity-20" />
-                                        <p className="text-sm font-medium">No files found matching your search.</p>
+                    {/* --- VIEW 3: QUIZ INTERFACE --- */}
+                    {showQuiz && (
+                        <motion.div 
+                            key="quiz" 
+                            initial={{ opacity: 0, scale: 0.95 }} 
+                            animate={{ opacity: 1, scale: 1 }} 
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="max-w-3xl mx-auto space-y-8 pb-40 pt-4"
+                        >
+                            <div className="flex flex-col md:flex-row justify-between items-center border-b border-white/5 pb-6 gap-4">
+                                <button 
+                                    onClick={() => setShowQuiz(false)} 
+                                    className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white flex items-center group"
+                                >
+                                    <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" /> 
+                                    Exit Quiz
+                                </button>
+                                {isCompleted && (
+                                    <div className="flex items-center bg-cyan-500/10 border border-cyan-500/30 px-6 py-2 rounded-2xl animate-pulse">
+                                        <Trophy size={18} className="text-cyan-400 mr-3" />
+                                        <span className="text-cyan-400 font-black text-sm uppercase tracking-tighter">
+                                            LOCKED: {score} / {quizzes[selectedQuarter.id].length}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className={`space-y-12 ${isCompleted ? 'pointer-events-none' : ''}`}>
+                                {quizzes[selectedQuarter.id]?.map((item, index) => (
+                                    <div key={index} className="space-y-6">
+                                        <div className="flex items-start space-x-4">
+                                            <span className="text-cyan-500 font-black italic text-2xl">
+                                                {index + 1 < 10 ? `0${index + 1}` : index + 1}.
+                                            </span>
+                                            <p className="text-lg text-white font-medium leading-relaxed">{item.q}</p>
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-3 pl-12">
+                                            {item.options.map((opt, oIdx) => (
+                                                <button 
+                                                    key={oIdx} 
+                                                    onClick={() => handleSelectOption(index, opt)} 
+                                                    className={`w-full text-left p-5 rounded-2xl border transition-all text-sm font-medium ${
+                                                        userAnswers[index] === opt 
+                                                        ? 'bg-cyan-500 border-cyan-400 text-slate-950 shadow-lg shadow-cyan-500/30 scale-[1.02]' 
+                                                        : 'bg-white/5 border-white/5 text-slate-400 hover:border-cyan-500/50'
+                                                    }`}
+                                                >
+                                                    {opt}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="fixed bottom-0 left-0 right-0 p-8 bg-slate-950/90 backdrop-blur-xl border-t border-white/5 flex justify-center z-50">
+                                {!isCompleted ? (
+                                    <button 
+                                        onClick={handleSubmitQuiz} 
+                                        className="bg-cyan-500 text-slate-950 px-16 py-4 rounded-2xl font-black uppercase text-xs tracking-widest italic shadow-2xl shadow-cyan-500/30 active:scale-95 transition-all"
+                                    >
+                                        Final Submit & Lock Module
+                                    </button>
+                                ) : (
+                                    <div className="bg-white/5 border border-white/10 px-10 py-4 rounded-2xl text-slate-500 font-black uppercase text-[10px] tracking-widest flex items-center">
+                                        <Lock size={14} className="mr-3" /> Assessment Completed and Locked
                                     </div>
                                 )}
                             </div>
