@@ -88,6 +88,110 @@ export default function Research({ auth }) {
                 a: "Qualitative Research", 
                 options: ["Quantitative Research", "Qualitative Research", "Statistical Research", "Experimental Research"] 
             }
+        ],
+        'q2': [
+            { 
+                q: "What type of question requires decision-making on research design, data collection, and analysis?", 
+                a: "Researchable question", 
+                options: ["Non-researchable question", "Researchable question", "Rhetorical question", "Hypothetical question"] 
+            },
+            { 
+                q: "Which type of hypothesis states that there is 'no difference' or no significant relationship between variables?", 
+                a: "Null Hypothesis", 
+                options: ["Alternative Hypothesis", "Null Hypothesis", "Cause and Effect Hypothesis", "Complex Hypothesis"] 
+            },
+            { 
+                q: "In an experiment, which variable is manipulated or changed by the researcher to observe its effect?", 
+                a: "Independent Variable", 
+                options: ["Dependent Variable", "Independent Variable", "Extraneous Variable", "Confounding Variable"] 
+            },
+            { 
+                q: "Which level of measurement describes variables with a true zero point, such as height, weight, and speed?", 
+                a: "Ratio Scale", 
+                options: ["Nominal Scale", "Ordinal Scale", "Interval Scale", "Ratio Scale"] 
+            },
+            { 
+                q: "What is considered the 'gold standard' research design involving manipulation, control, and randomization?", 
+                a: "Experimental Research Design", 
+                options: ["Descriptive Research Design", "Developmental Research Design", "Experimental Research Design", "Correlational Research Design"] 
+            },
+            { 
+                q: "Which sampling technique ensures that every unit in the population has an equal chance of being selected?", 
+                a: "Probability Sampling", 
+                options: ["Non-Probability Sampling", "Probability Sampling", "Quota Sampling", "Purposive Sampling"] 
+            },
+            { 
+                q: "Data that consists of names or categories without any intrinsic order (e.g., Male/Female) is classified as:", 
+                a: "Nominal Data", 
+                options: ["Ordinal Data", "Interval Data", "Ratio Data", "Nominal Data"] 
+            },
+            { 
+                q: "Which visual tool is used to reveal trends, relationships, and frequency distributions in data at a glance?", 
+                a: "Graph", 
+                options: ["Tabulation", "Graph", "Textual Presentation", "Raw Data"] 
+            },
+            { 
+                q: "What is the act of copying another person's ideas, words, or work and pretending they are your own?", 
+                a: "Plagiarism", 
+                options: ["Citation", "Paraphrasing", "Plagiarism", "Copyright"] 
+            },
+            { 
+                q: "In writing the Review of Related Literature (RRL), which format is commonly used for citing sources?", 
+                a: "APA Format", 
+                options: ["MLA Format", "APA Format", "Chicago Style", "IEEE Format"] 
+            }
+        ],
+        'q3': [
+            { 
+                q: "What are the raw materials that an information system transforms into useful information?", 
+                a: "Data", 
+                options: ["Software", "Data", "Process", "Hardware"] 
+            },
+            { 
+                q: "According to Moore's Law, what is predicted to double every 18 to 24 months?", 
+                a: "Computer processing power", 
+                options: ["Internet speed", "Data storage costs", "Computer processing power", "Screen resolution"] 
+            },
+            { 
+                q: "Which SDLC phase involves creating a detailed blueprint of various processes and specifying hardware requirements?", 
+                a: "Systems Design", 
+                options: ["Systems Planning", "Systems Analysis", "Systems Design", "Systems Implementation"] 
+            },
+            { 
+                q: "Which SDLC model is described as a 'risk-driven' process model?", 
+                a: "Spiral Model", 
+                options: ["Waterfall Model", "Agile Model", "Iterative Model", "Spiral Model"] 
+            },
+            { 
+                q: "In the Traditional Approach to systems development, stages must be completed in what type of order?", 
+                a: "Sequential/Linear", 
+                options: ["Randomized", "Sequential/Linear", "Cyclical", "Parallel"] 
+            },
+            { 
+                q: "What industry standard modeling language is used in the Object-Oriented approach?", 
+                a: "Unified Modeling Language (UML)", 
+                options: ["Hypertext Markup Language (HTML)", "Unified Modeling Language (UML)", "Data Flow Diagram (DFD)", "Structured Query Language (SQL)"] 
+            },
+            { 
+                q: "Which type of feasibility study involves a cost/benefit analysis to determine if a project is worth the investment?", 
+                a: "Economic Feasibility", 
+                options: ["Technical Feasibility", "Operational Feasibility", "Economic Feasibility", "Scheduling Feasibility"] 
+            },
+            { 
+                q: "What graphical technique is used to show how data moves through an information system without showing program logic?", 
+                a: "Data Flow Diagram (DFD)", 
+                options: ["Flowchart", "Use Case Diagram", "Data Flow Diagram (DFD)", "Class Diagram"] 
+            },
+            { 
+                q: "In a DFD, what do you call a process that has input but produces no output?", 
+                a: "Black hole", 
+                options: ["Miracle", "Black hole", "Gray hole", "Data store"] 
+            },
+            { 
+                q: "Which component of an Information System consists of the programs that control hardware (e.g., Windows, Android)?", 
+                a: "Software", 
+                options: ["People", "Process", "Software", "Database"] 
+            }
         ]
     };
 
@@ -118,7 +222,7 @@ export default function Research({ auth }) {
             folderName: 'Quarter 2',
             description: 'Research Problems, Feasibility, and Sampling',
             status: 'Unlocked',
-            hasQuiz: false,
+            hasQuiz: true,
             files: [
                 'week-1-Research-Problem-2.pdf',
                 'WEEK-2-1 (1).pdf',
@@ -137,7 +241,7 @@ export default function Research({ auth }) {
             folderName: 'Quarter 3',
             description: 'Systems Development, SDLC, and Dataflow',
             status: 'Unlocked',
-            hasQuiz: false,
+            hasQuiz: true,
             files: [
                 'WEEK-1_APPROACHES-TO-SYSTEMS-DEVELOPMENT_BADUA.pdf',
                 'week-2-what-is-an-information-system.pdf',
