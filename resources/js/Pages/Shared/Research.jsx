@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/react';
 import { 
     FileText, Search, ChevronRight, 
     ArrowLeft, Download, Eye, FolderOpen, 
-    Layers, BookOpen, Trophy, CheckCircle2, Lock 
+    Layers, BookOpen, Trophy, CheckCircle2, Lock, X 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -12,17 +12,20 @@ export default function Research({ auth }) {
     // --- APP STATES ---
     const [selectedQuarter, setSelectedQuarter] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    
+    // --- MODAL STATES ---
     const [showQuiz, setShowQuiz] = useState(false);
+    const [showPdfModal, setShowPdfModal] = useState(false);
+    const [currentPdfUrl, setCurrentPdfUrl] = useState(null);
+    const [currentFileName, setCurrentFileName] = useState('');
     
     // --- QUIZ & PERSISTENCE STATES ---
     const [userAnswers, setUserAnswers] = useState({});
     const [score, setScore] = useState(null);
     const [isCompleted, setIsCompleted] = useState(false);
 
-    // Dynamic Quiz ID based on selected quarter
     const quizId = selectedQuarter ? `quiz_${selectedQuarter.id}` : null;
 
-    // --- EFFECT: LOAD QUIZ PROGRESS ---
     useEffect(() => {
         if (selectedQuarter && quizId) {
             const completionStatus = localStorage.getItem(`completed_${quizId}`);
@@ -80,61 +83,60 @@ export default function Research({ auth }) {
         ]
     };
 
-    // --- DATA: FILE STRUCTURE ---
+    // --- DATA: FILE STRUCTURE (Based on public/files/pr/q1 path) ---
     const quartersData = [
         {
             id: 'q1',
             title: 'Quarter 1',
-            folderName: 'Quarter 1', 
+            folderName: 'q1', // Matches public/files/pr/q1
             description: 'Introduction to Research, Characteristics, and Ethics',
             status: 'Unlocked',
             hasQuiz: true,
             files: [
-                '10-IT_-_RESEARCH-_WEEK-1-introduction-to-research_BABAC_.pdf',
-                '10-IT_-_RESEARCH_WEEK-2-GOALS-od-Research_B.-BABAC.pdf',
-                '10-IT_-_RESEARCH_WEEK-3-Characteristics-of-Research_JOHN-ELMOS-SEASTRES.pdf',
-                '10-IT_-_RESEARCH_WEEK-3-Characteristics-of-Research_JOHN-ELMOS-SEASTRES(1).pdf',
-                '10-IT_-_RESEARCH_WEEK-4_TYPES-of-Research-M.COLLADO.pdf',
-                '10-IT_-_RESEARCH_WEEK-5_Primary-and-secondary-Sources_EDNALYN-F.-OROLA.pdf',
-                '10-IT_-_RESEARCH_WEEK-6-Research-Process-and-Key-Considerations-DBDCarreon.pdf',
-                '10-IT_-_RESEARCH_WEEK-7_RESEARCH-design_concepcion.pdf',
-                '10-IT_-_RESEARCH_WEEK-8-_Qualitative-vs-Quantitative-Research_Anita-B.-Concepcion.pdf',
+                'G10-RESEARCH-WEEK1.pdf',
+                'G10-RESEARCH-WEEK2.pdf',
+                'G10-RESEARCH-WEEK3.pdf',
+                'G10-RESEARCH-WEEK4.pdf',
+                'G10-RESEARCH-WEEK5.pdf',
+                'G10-RESEARCH-WEEK6.pdf',
+                'G10-RESEARCH-WEEK7.pdf',
+                'G10-RESEARCH-WEEK8.pdf'
             ]
         },
         {
             id: 'q2',
             title: 'Quarter 2',
-            folderName: 'Quarter 2', 
+            folderName: 'q2', // Matches public/files/pr/q2
             description: 'Research Problems, Feasibility, and Sampling',
             status: 'Unlocked',
             hasQuiz: true,
             files: [
-                'week-1-Research-Problem-2.pdf',
-                'WEEK-2-1 (1).pdf',
-                'Week-3-1 (2).pdf',
-                'WEEK-5-FEASIBILITY-STUDY-IN-INFORMATION-SYSTEM.pdf',
                 'WEEK-21-1.pdf',
                 'WEEK-22-1.pdf',
-                'Week3_Sampling_EdnalynOrola-2 (1).pdf',
-                'WEEK4-1-1.pdf',
-                'WEEK5-1-1.pdf',
+                'WEEK1-PROBLEM-SOLVING.pdf',
+                'WEEK1-PROBLEM-SOLVING.pdf.pdf', // Double extension included to match screenshot
+                'WEEK2-1-PROBLEM-SOLVING.pdf.pdf',
+                'WEEK3-1-PROBLEM-SOLVING.pdf.pdf',
+                'Week3-Sampling-EdnalynOrola-2.pdf',
+                'WEEK5-1-1-PROBLEM-SOLVING.pdf',
+                'WEEK5-PROBLEM-SOLVING.pdf'
             ]
         },
         {
             id: 'q3',
             title: 'Quarter 3',
-            folderName: 'Quarter 3',
+            folderName: 'q3', // Matches public/files/pr/q3
             description: 'Systems Development, SDLC, and Dataflow',
             status: 'Unlocked',
             hasQuiz: true,
             files: [
-                'WEEK-1_APPROACHES-TO-SYSTEMS-DEVELOPMENT_BADUA.pdf',
+                'WEEK-1-APPROACHES-TO-SYSTEMS-DEVELOPMENT-BADUA.pdf',
                 'week-2-what-is-an-information-system.pdf',
                 'Week-3-Systems-Development-Life-Cycle-2.docx.pdf',
                 'Week-3-Systems-Development-Life-Cycle.pdf',
                 'WEEK-4-Traditional-VS-Object-Oriented-Approach.pdf',
                 'WEEK-5-FEASIBILITY-STUDY-IN-INFORMATION-SYSTEM.pdf',
-                'WEEK6-DATAFLOW-DIAGRAM.pdf',
+                'WEEK6-DATAFLOW-DIAGRAM.pdf'
             ]
         }
     ];
@@ -143,7 +145,8 @@ export default function Research({ auth }) {
     const handleDownload = (fileName) => {
         try {
             const link = document.createElement('a');
-            link.href = `/files/module/pr/${selectedQuarter.folderName}/${fileName}`;
+            // FIX: Uses /files/pr/[quarter]/[file]
+            link.href = `/files/pr/${selectedQuarter.folderName}/${fileName}`;
             link.download = fileName;
             document.body.appendChild(link);
             link.click();
@@ -153,34 +156,34 @@ export default function Research({ auth }) {
         }
     };
 
-    // --- HANDLERS: VIEW FILE (FIXED) ---
+    // --- HANDLERS: VIEW FILE (PDF MODAL) ---
     const handleFileView = (fileName) => {
         const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
         
-        // 1. LINISIN ANG URL: Gumamit ng encodeURIComponent para sa mga spaces sa folder at filename
-        // Halimbawa: "Quarter 1" magiging "Quarter%201" para hindi mag 404 Error
-        const safeFolderName = encodeURIComponent(selectedQuarter.folderName); // e.g. Quarter%201
-        const safeFileName = encodeURIComponent(fileName); // e.g. Week%201...pdf
+        // Encode URL parts
+        const safeFolderName = encodeURIComponent(selectedQuarter.folderName);
+        const safeFileName = encodeURIComponent(fileName);
         
-        // 2. CONSTRUCT URL: Siguraduhing tama ang path (/files/module/pr/...)
-        const fileUrl = `${window.location.origin}/files/module/pr/${safeFolderName}/${safeFileName}`;
+        // FIX: Uses /files/pr/[quarter]/[file] based on your specific instruction
+        const fileUrl = `${window.location.origin}/files/pr/${safeFolderName}/${safeFileName}`;
         
-        // 3. CHECK FILE TYPE
+        console.log("Attempting to open:", fileUrl); // Debug log
+
         const type = fileName.split('.').pop().toLowerCase();
 
         if (type === 'pptx') {
-            // PPTX Logic (Google Docs Viewer)
             if (isLocal) {
-                alert("Note: PPTX Preview is only available when the site is live. Downloading file instead.");
+                alert("PPTX Preview only works on live site. Downloading instead.");
                 handleDownload(fileName);
             } else {
                 const previewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
                 window.open(previewUrl, '_blank');
             }
         } else {
-            // PDF Logic (Direct Browser Open)
-            // Bubuksan nito ang PDF sa new tab. Kung nagda-download ito agad, check your browser settings.
-            window.open(fileUrl, '_blank');
+            // Open PDF in Modal
+            setCurrentPdfUrl(fileUrl);
+            setCurrentFileName(fileName);
+            setShowPdfModal(true);
         }
     };
 
@@ -416,6 +419,42 @@ export default function Research({ auth }) {
                             </div>
                         </motion.div>
                     )}
+
+                    {/* --- PDF PREVIEW MODAL --- */}
+                    {showPdfModal && (
+                        <motion.div 
+                            initial={{ opacity: 0 }} 
+                            animate={{ opacity: 1 }} 
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/80 backdrop-blur-sm"
+                        >
+                            <div className="bg-slate-900 w-full max-w-6xl h-[90vh] rounded-2xl border border-white/10 flex flex-col shadow-2xl">
+                                {/* Modal Header */}
+                                <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5 rounded-t-2xl">
+                                    <div className="flex items-center gap-3">
+                                        <FileText className="text-cyan-400" size={20} />
+                                        <h3 className="text-sm font-bold text-white truncate max-w-md">{currentFileName}</h3>
+                                    </div>
+                                    <button 
+                                        onClick={() => setShowPdfModal(false)}
+                                        className="p-2 bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 rounded-lg transition-all"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                                
+                                {/* Modal Content (Iframe) */}
+                                <div className="flex-1 bg-white/5 relative">
+                                    <iframe 
+                                        src={currentPdfUrl} 
+                                        className="w-full h-full rounded-b-2xl border-none"
+                                        title="PDF Preview"
+                                    />
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
                 </AnimatePresence>
             </div>
         </AuthenticatedLayout>
