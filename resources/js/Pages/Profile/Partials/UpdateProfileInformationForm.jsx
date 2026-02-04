@@ -4,14 +4,16 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-// TechNest Icons
-import { User, Mail, CheckCircle, Info } from 'lucide-react';
+// TechNest Icons - Added 'Hash' for the LRN icon
+import { User, Mail, CheckCircle, Info, Hash } from 'lucide-react';
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
     const user = usePage().props.auth.user;
+
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
         email: user.email,
+        lrn: user.lrn || '', // Added LRN to form state
     });
 
     const submit = (e) => {
@@ -33,12 +35,13 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         Identity: <span className="text-blue-400">Profile Information</span>
                     </h2>
                     <p className="mt-1 text-sm text-slate-400 font-medium leading-relaxed">
-                        Update your account's profile information and email address.
+                        Update your account's profile information, LRN, and email address.
                     </p>
                 </div>
             </header>
 
             <form onSubmit={submit} className="relative z-10 space-y-6">
+                {/* --- Name Input --- */}
                 <div className="space-y-2">
                     <InputLabel htmlFor="name" value="Full Name" 
                         className="text-[10px] font-black uppercase tracking-widest text-slate-500" />
@@ -57,6 +60,27 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     <InputError className="mt-2 italic text-red-400 font-bold text-xs" message={errors.name} />
                 </div>
 
+                {/* --- LRN Input (Added Here) --- */}
+                <div className="space-y-2">
+                    <InputLabel htmlFor="lrn" value="Learner Reference Number (LRN)" 
+                        className="text-[10px] font-black uppercase tracking-widest text-slate-500" />
+                    <div className="relative">
+                        {/* Using Hash icon to represent ID number */}
+                        <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                        <TextInput
+                            id="lrn"
+                            type="text" 
+                            className="block w-full pl-11 bg-white/[0.03] border-white/[0.08] text-white focus:ring-blue-500/20 focus:border-blue-500/40 rounded-xl"
+                            value={data.lrn}
+                            onChange={(e) => setData('lrn', e.target.value)}
+                            // Remove 'required' if LRN is optional, keep if mandatory
+                            autoComplete="off" 
+                        />
+                    </div>
+                    <InputError className="mt-2 italic text-red-400 font-bold text-xs" message={errors.lrn} />
+                </div>
+
+                {/* --- Email Input --- */}
                 <div className="space-y-2">
                     <InputLabel htmlFor="email" value="Email Address" 
                         className="text-[10px] font-black uppercase tracking-widest text-slate-500" />

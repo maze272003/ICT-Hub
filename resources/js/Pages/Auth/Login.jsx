@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'; // Added useState
+import { useEffect, useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { User, Lock, Cpu, ArrowLeft, Sparkles, AlertCircle, Mail, Hash, Eye, EyeOff } from 'lucide-react'; // Added Mail and Hash icons
+// Removed Cpu from import since we are replacing it with an image
+import { User, Lock, ArrowLeft, Sparkles, AlertCircle, Mail, Hash, Eye, EyeOff } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
     // State para sa pag-switch ng Login Method (Email vs LRN)
@@ -50,9 +51,16 @@ export default function Login({ status, canResetPassword }) {
                 <div className="bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative overflow-hidden">
                     
                     <div className="relative text-center mb-8">
-                        <div className="inline-flex p-4 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl shadow-xl shadow-cyan-500/20 mb-6 transform -rotate-3 hover:rotate-0 transition-transform duration-500">
-                            <Cpu className="text-white w-8 h-8" />
+                        {/* --- CHANGED: Replaced Blue Box with Large Image Only --- */}
+                        <div className="flex justify-center mb-6">
+                            <img 
+                                src="/images/fmnhs.png" 
+                                alt="FMNHS Logo" 
+                                className="w-24 h-24 md:w-32 md:h-32 object-contain transform hover:scale-105 transition-transform duration-500" 
+                            />
                         </div>
+                        {/* ------------------------------------------------------- */}
+                        
                         <h1 className="text-3xl font-black text-white tracking-tight italic uppercase">
                             Tech<span className="text-cyan-400">Nest</span> Login
                         </h1>
@@ -67,7 +75,7 @@ export default function Login({ status, canResetPassword }) {
                         </div>
                     )}
 
-                    {/* --- NEW: TAB SWITCHER --- */}
+                    {/* --- TAB SWITCHER --- */}
                     <div className="grid grid-cols-2 gap-2 mb-8 p-1 bg-slate-950/50 rounded-xl border border-white/5">
                         <button
                             type="button"
@@ -92,7 +100,6 @@ export default function Login({ status, canResetPassword }) {
                             <Hash size={14} className="mr-2" /> LRN
                         </button>
                     </div>
-                    {/* ------------------------- */}
 
                     <form onSubmit={submit} className="space-y-6">
                         

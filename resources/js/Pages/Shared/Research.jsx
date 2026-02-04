@@ -553,12 +553,12 @@ export default function Research({ auth }) {
                             initial={{ opacity: 0 }} 
                             animate={{ opacity: 1 }} 
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-xl"
+                            className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-8 bg-black/90 backdrop-blur-xl"
                         >
                             <motion.div 
                                 initial={{ scale: 0.95, opacity: 0 }} 
                                 animate={{ scale: 1, opacity: 1 }} 
-                                className="bg-gradient-to-b from-slate-900 to-slate-950 w-full max-w-7xl h-[90vh] rounded-3xl border border-white/10 flex flex-col shadow-2xl overflow-hidden"
+                                className="bg-gradient-to-b from-slate-900 to-slate-950 w-full max-w-7xl h-full md:h-[90vh] rounded-none md:rounded-3xl border-none md:border-white/10 flex flex-col shadow-2xl overflow-hidden"
                             >
                                 {/* Modal Header */}
                                 <div className="flex items-center justify-between p-6 border-b border-white/10 bg-gradient-to-r from-white/5 to-transparent">
@@ -589,12 +589,14 @@ export default function Research({ auth }) {
                                 </div>
                                 
                                 {/* Modal Content (Iframe) */}
-                                <div className="flex-1 bg-gradient-to-b from-slate-800/30 to-slate-900/50 relative overflow-hidden">
-                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.03),transparent_50%)]"></div>
+                                <div className="flex-1 bg-gradient-to-b from-slate-800/30 to-slate-900/50 relative overflow-auto">
+                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.03),transparent_50%)] pointer-events-none"></div>
                                     <iframe 
                                         src={currentPdfUrl} 
                                         className="w-full h-full rounded-b-3xl border-none relative z-10"
                                         title="PDF Preview"
+                                        scrolling="yes"
+                                        style={{ minHeight: '100%', width: '100%', touchAction: 'auto' }}
                                     />
                                 </div>
                             </motion.div>

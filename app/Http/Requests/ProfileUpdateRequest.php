@@ -14,7 +14,7 @@ class ProfileUpdateRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
             // Add this LRN rule:
-            'lrn' => ['nullable', 'string', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'lrn' => ['nullable', 'string', 'max:20'], // Adjust max length or 'required' as needed
         ];
     }
 }
