@@ -153,28 +153,33 @@ export default function Research({ auth }) {
         }
     };
 
-    // --- HANDLERS: VIEW FILE (UPDATED) ---
+    // --- HANDLERS: VIEW FILE (FIXED) ---
     const handleFileView = (fileName) => {
         const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
         
-        // Construct the full URL based on your file structure
-        const fileUrl = `${window.location.origin}/files/module/pr/${selectedQuarter.folderName}/${fileName}`;
+        // 1. LINISIN ANG URL: Gumamit ng encodeURIComponent para sa mga spaces sa folder at filename
+        // Halimbawa: "Quarter 1" magiging "Quarter%201" para hindi mag 404 Error
+        const safeFolderName = encodeURIComponent(selectedQuarter.folderName); // e.g. Quarter%201
+        const safeFileName = encodeURIComponent(fileName); // e.g. Week%201...pdf
         
-        // Determine file type by extension
+        // 2. CONSTRUCT URL: Siguraduhing tama ang path (/files/module/pr/...)
+        const fileUrl = `${window.location.origin}/files/module/pr/${safeFolderName}/${safeFileName}`;
+        
+        // 3. CHECK FILE TYPE
         const type = fileName.split('.').pop().toLowerCase();
 
         if (type === 'pptx') {
+            // PPTX Logic (Google Docs Viewer)
             if (isLocal) {
-                // Pag local, i-download na lang muna para hindi mag-error ang Google preview
                 alert("Note: PPTX Preview is only available when the site is live. Downloading file instead.");
                 handleDownload(fileName);
             } else {
-                // Pag live na, ito ang gagana
                 const previewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
                 window.open(previewUrl, '_blank');
             }
         } else {
-            // For PDFs and other files
+            // PDF Logic (Direct Browser Open)
+            // Bubuksan nito ang PDF sa new tab. Kung nagda-download ito agad, check your browser settings.
             window.open(fileUrl, '_blank');
         }
     };
