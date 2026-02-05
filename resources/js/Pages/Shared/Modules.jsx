@@ -397,7 +397,7 @@ export default function Modules({ auth }) {
                                         onClick={handleSubmitQuiz} 
                                         className="bg-cyan-500 text-slate-950 px-16 py-4 rounded-2xl font-black uppercase text-xs tracking-widest italic shadow-2xl shadow-cyan-500/30 active:scale-95 transition-all"
                                     >
-                                        Submit Assessment
+                                        Submit the Assessment
                                     </button>
                                 ) : (
                                     <div className="flex gap-4">
