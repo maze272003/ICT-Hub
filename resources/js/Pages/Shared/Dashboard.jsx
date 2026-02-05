@@ -12,19 +12,19 @@ export default function Dashboard({ auth }) {
     const lessonsData = [
         {
             id: 'module-q1',
-            title: 'Module - Quarter 1',
+            title: 'TLE - Quarter 1', // Changed from Module to TLE
             path: 'module/q1',
             files: ['q1.pdf']
         },
         {
             id: 'module-q2',
-            title: 'Module - Quarter 2',
+            title: 'TLE - Quarter 2', // Changed from Module to TLE
             path: 'module/q2',
             files: ['q2.pdf']
         },
         {
             id: 'module-q3',
-            title: 'Module - Quarter 3',
+            title: 'TLE - Quarter 3', // Changed from Module to TLE
             path: 'module/q3',
             files: ['q3.pdf']
         },
@@ -163,13 +163,12 @@ export default function Dashboard({ auth }) {
                     </div>
                 </div>
 
-                {/* --- EXISTING TILES (OPTIONAL: Pwede mong tanggalin kung gusto mo purely welcome page lang) --- */}
-                {/* Nilagyan ko ng divider text para clear na "Shortcuts" ito */}
+                {/* --- QUICK ACCESS TILES --- */}
                 <div>
                     <h3 className="text-slate-500 text-xs font-black uppercase tracking-[0.3em] mb-6 ml-2">Quick Access Tiles</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         
-                        {/* Modules Tile */}
+                        {/* Modules Tile (Renamed to TLE) */}
                         <Link href={route('dashboard.modules')} className="group relative bg-slate-900/40 border border-white/5 p-8 rounded-[2rem] hover:bg-white/5 hover:border-cyan-500/30 transition-all duration-300">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="p-3 bg-cyan-500/10 rounded-xl text-cyan-400">
@@ -177,7 +176,8 @@ export default function Dashboard({ auth }) {
                                 </div>
                                 <ArrowRight size={20} className="text-slate-600 group-hover:text-cyan-400 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100 transition-all" />
                             </div>
-                            <h4 className="text-white font-bold text-lg">My Modules</h4>
+                            {/* Changed Tile Name from "My Modules" to "TLE" */}
+                            <h4 className="text-white font-bold text-lg">TLE</h4>
                             <p className="text-slate-500 text-xs mt-2">Access learning materials.</p>
                         </Link>
 

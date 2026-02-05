@@ -33,8 +33,8 @@ export default function AuthenticatedLayout({ header, children }) {
                             {/* Logo Section */}
                             <div className="flex shrink-0 items-center">
                                 <Link href="/" className="flex items-center space-x-3 group">
-                                    <div className="p-2 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-all">
-                                        <Cpu className="text-white w-5 h-5" />
+                                    <div className="w-10 h-10 bg-white rounded-xl shadow-lg p-0.5 overflow-hidden flex items-center justify-center">
+                                        <img src="/images/fmnhs.png" alt="School Logo" className="w-full h-full object-cover rounded-lg" />
                                     </div>
                                     <span className="text-xl font-black tracking-tighter text-white">
                                         Tech<span className="text-cyan-400">Nest</span>

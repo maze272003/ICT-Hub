@@ -5,7 +5,7 @@ import {
     FileText, Search, ChevronRight, 
     ArrowLeft, Download, Eye, FolderOpen, 
     Layers, BookOpen, Trophy, CheckCircle2, Lock, X,
-    Clock, Star, TrendingUp
+    Clock, Star, TrendingUp, RotateCcw // Added RotateCcw for the button icon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -84,12 +84,12 @@ export default function Research({ auth }) {
         ]
     };
 
-    // --- DATA: FILE STRUCTURE (Based on public/files/pr/q1 path) ---
+    // --- DATA: FILE STRUCTURE ---
     const quartersData = [
         {
             id: 'q1',
             title: 'Quarter 1',
-            folderName: 'q1', // Matches public/files/pr/q1
+            folderName: 'q1',
             description: 'Introduction to Research, Characteristics, and Ethics',
             status: 'Unlocked',
             hasQuiz: true,
@@ -107,7 +107,7 @@ export default function Research({ auth }) {
         {
             id: 'q2',
             title: 'Quarter 2',
-            folderName: 'q2', // Matches public/files/pr/q2
+            folderName: 'q2',
             description: 'Research Problems, Feasibility, and Sampling',
             status: 'Unlocked',
             hasQuiz: true,
@@ -115,7 +115,7 @@ export default function Research({ auth }) {
                 'WEEK-21-1.pdf',
                 'WEEK-22-1.pdf',
                 'WEEK1-PROBLEM-SOLVING.pdf',
-                'WEEK1-PROBLEM-SOLVING.pdf.pdf', // Double extension included to match screenshot
+                'WEEK1-PROBLEM-SOLVING.pdf.pdf',
                 'WEEK2-1-PROBLEM-SOLVING.pdf.pdf',
                 'WEEK3-1-PROBLEM-SOLVING.pdf.pdf',
                 'Week3-Sampling-EdnalynOrola-2.pdf',
@@ -126,7 +126,7 @@ export default function Research({ auth }) {
         {
             id: 'q3',
             title: 'Quarter 3',
-            folderName: 'q3', // Matches public/files/pr/q3
+            folderName: 'q3',
             description: 'Systems Development, SDLC, and Dataflow',
             status: 'Unlocked',
             hasQuiz: true,
@@ -146,7 +146,6 @@ export default function Research({ auth }) {
     const handleDownload = (fileName) => {
         try {
             const link = document.createElement('a');
-            // FIX: Uses /files/pr/[quarter]/[file]
             link.href = `/files/pr/${selectedQuarter.folderName}/${fileName}`;
             link.download = fileName;
             document.body.appendChild(link);
@@ -160,16 +159,10 @@ export default function Research({ auth }) {
     // --- HANDLERS: VIEW FILE (PDF MODAL) ---
     const handleFileView = (fileName) => {
         const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-        
-        // Encode URL parts
         const safeFolderName = encodeURIComponent(selectedQuarter.folderName);
         const safeFileName = encodeURIComponent(fileName);
-        
-        // FIX: Uses /files/pr/[quarter]/[file] based on your specific instruction
         const fileUrl = `${window.location.origin}/files/pr/${safeFolderName}/${safeFileName}`;
         
-        console.log("Attempting to open:", fileUrl); // Debug log
-
         const type = fileName.split('.').pop().toLowerCase();
 
         if (type === 'pptx') {
@@ -181,7 +174,6 @@ export default function Research({ auth }) {
                 window.open(previewUrl, '_blank');
             }
         } else {
-            // Open PDF in Modal
             setCurrentPdfUrl(fileUrl);
             setCurrentFileName(fileName);
             setShowPdfModal(true);
@@ -208,7 +200,24 @@ export default function Research({ auth }) {
         localStorage.setItem(`score_${quizId}`, correctCount.toString());
         localStorage.setItem(`completed_${quizId}`, 'true');
         const percentage = Math.round((correctCount / currentQuestions.length) * 100);
-        alert(`Assessment Completed!\n\nYour Score: ${correctCount} / ${currentQuestions.length} (${percentage}%)\n\n${percentage === 100 ? '🏆 Perfect Score! Outstanding work!' : percentage >= 70 ? 'Great job! You passed the assessment.' : 'Keep learning! Review the materials and try again.'}`);
+        alert(`Assessment Completed!\n\nYour Score: ${correctCount} / ${currentQuestions.length} (${percentage}%)`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // --- NEW HANDLER: RETAKE QUIZ ---
+    const handleRetake = () => {
+        if (window.confirm("Are you sure you want to retake the assessment? Your previous score will be cleared.")) {
+            setIsCompleted(false);
+            setUserAnswers({});
+            setScore(null);
+            
+            // Clear specific keys for this quiz
+            localStorage.removeItem(`completed_${quizId}`);
+            localStorage.removeItem(`answers_${quizId}`);
+            localStorage.removeItem(`score_${quizId}`);
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
     return (
@@ -538,9 +547,17 @@ export default function Research({ auth }) {
                                         Submit Assessment
                                     </button>
                                 ) : (
-                                    <div className="bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20 px-12 py-4 rounded-2xl text-emerald-400 font-black uppercase text-xs tracking-widest flex items-center gap-3">
-                                        <Lock size={16} />
-                                        Assessment Completed & Locked
+                                    <div className="flex gap-4">
+                                        <div className="bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20 px-8 py-4 rounded-2xl text-emerald-400 font-black uppercase text-xs tracking-widest flex items-center gap-3">
+                                            <Trophy size={16} />
+                                            Score: {score} / {quizzes[selectedQuarter.id].length}
+                                        </div>
+                                        <button 
+                                            onClick={handleRetake}
+                                            className="bg-white text-slate-950 px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-slate-200 flex items-center transition-all active:scale-95 shadow-xl"
+                                        >
+                                            <RotateCcw size={14} className="mr-3" /> Retake
+                                        </button>
                                     </div>
                                 )}
                             </div>
