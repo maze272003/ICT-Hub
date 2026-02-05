@@ -1,8 +1,102 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
-import { GraduationCap, Layers, Search, ArrowRight, BookOpen, BrainCircuit, Info } from 'lucide-react';
+import { GraduationCap, Layers, Search, ArrowRight, BookOpen, BrainCircuit, Info, X, Download, FileText, FolderOpen, Eye } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function Dashboard({ auth }) {
+    const [showLessonsModal, setShowLessonsModal] = useState(false);
+    const [showPdfModal, setShowPdfModal] = useState(false);
+    const [currentPdfUrl, setCurrentPdfUrl] = useState(null);
+    const [currentFileName, setCurrentFileName] = useState('');
+
+    const lessonsData = [
+        {
+            id: 'module-q1',
+            title: 'Module - Quarter 1',
+            path: 'module/q1',
+            files: ['q1.pdf']
+        },
+        {
+            id: 'module-q2',
+            title: 'Module - Quarter 2',
+            path: 'module/q2',
+            files: ['q2.pdf']
+        },
+        {
+            id: 'module-q3',
+            title: 'Module - Quarter 3',
+            path: 'module/q3',
+            files: ['q3.pdf']
+        },
+        {
+            id: 'pr-q1',
+            title: 'Research - Quarter 1',
+            path: 'pr/q1',
+            files: [
+                'G10-RESEARCH-WEEK1.pdf',
+                'G10-RESEARCH-WEEK2.pdf',
+                'G10-RESEARCH-WEEK3.pdf',
+                'G10-RESEARCH-WEEK4.pdf',
+                'G10-RESEARCH-WEEK5.pdf',
+                'G10-RESEARCH-WEEK6.pdf',
+                'G10-RESEARCH-WEEK7.pdf',
+                'G10-RESEARCH-WEEK8.pdf'
+            ]
+        },
+        {
+            id: 'pr-q2',
+            title: 'Research - Quarter 2',
+            path: 'pr/q2',
+            files: [
+                'WEEK1-PROBLEM-SOLVING.pdf',
+                'WEEK1-PROBLEM-SOLVING.pdf.pdf',
+                'WEEK-21-1.pdf',
+                'WEEK2-1-PROBLEM-SOLVING.pdf',
+                'WEEK-22-1.pdf',
+                'WEEK3-1-PROBLEM-SOLVING.pdf.pdf',
+                'Week3-Sampling-EdnalynOrola-2.pdf',
+                'WEEK5-1-1-PROBLEM-SOLVING.pdf',
+                'WEEK5-PROBLEM-SOLVING.pdf'
+            ]
+        },
+        {
+            id: 'pr-q3',
+            title: 'Research - Quarter 3',
+            path: 'pr/q3',
+            files: [
+                'WEEK-1-APPROACHES-TO-SYSTEMS-DEVELOPMENT-BADUA.pdf',
+                'week-2-what-is-an-information-system.pdf',
+                'Week-3-Systems-Development-Life-Cycle.pdf',
+                'Week-3-Systems-Development-Life-Cycle-2.docx.pdf',
+                'WEEK-4-Traditional-VS-Object-Oriented-Approach.pdf',
+                'WEEK-5-FEASIBILITY-STUDY-IN-INFORMATION-SYSTEM.pdf',
+                'WEEK6-DATAFLOW-DIAGRAM.pdf'
+            ]
+        }
+    ];
+
+    const handleDownload = (path, fileName) => {
+        try {
+            const link = document.createElement('a');
+            link.href = `/files/${path}/${fileName}`;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            alert('Error downloading file.');
+        }
+    };
+
+    const handleFileView = (path, fileName) => {
+        const safePath = encodeURIComponent(path);
+        const safeFileName = encodeURIComponent(fileName);
+        const fileUrl = `${window.location.origin}/files/${safePath}/${safeFileName}`;
+        setCurrentPdfUrl(fileUrl);
+        setCurrentFileName(fileName);
+        setShowPdfModal(true);
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -48,10 +142,10 @@ export default function Dashboard({ auth }) {
                         <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full md:w-auto">
                             
                             {/* Button 1: View Lessons */}
-                            <a href="#lessons" className="w-full md:w-auto group relative px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all hover:-translate-y-1 shadow-lg shadow-cyan-500/25 flex items-center justify-center">
+                            <button onClick={() => setShowLessonsModal(true)} className="w-full md:w-auto group relative px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all hover:-translate-y-1 shadow-lg shadow-cyan-500/25 flex items-center justify-center">
                                 <BookOpen className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
                                 View Lessons
-                            </a>
+                            </button>
 
                             {/* Button 2: Take Quiz */}
                             <a href="#quiz" className="w-full md:w-auto group relative px-8 py-4 bg-slate-800 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-950/50 hover:border-cyan-400 font-black uppercase tracking-widest rounded-xl transition-all hover:-translate-y-1 flex items-center justify-center">
@@ -106,6 +200,127 @@ export default function Dashboard({ auth }) {
 
                     </div>
                 </div>
+
+                {/* --- LESSONS MODAL --- */}
+                {showLessonsModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-xl">
+                        <div className="bg-gradient-to-b from-slate-900 to-slate-950 w-full max-w-6xl h-[85vh] rounded-3xl border border-white/10 flex flex-col shadow-2xl overflow-hidden">
+                            {/* Modal Header */}
+                            <div className="flex items-center justify-between p-6 border-b border-white/10 bg-gradient-to-r from-white/5 to-transparent">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+                                        <BookOpen size={24} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-white">All Lessons</h3>
+                                        <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mt-1">
+                                            {lessonsData.reduce((acc, l) => acc + l.files.length, 0)} Documents Available
+                                        </p>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => setShowLessonsModal(false)}
+                                    className="p-3 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-xl transition-all group"
+                                >
+                                    <X size={20} className="text-slate-400 group-hover:text-red-400 transition-colors" />
+                                </button>
+                            </div>
+                            
+                            {/* Modal Content */}
+                            <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                                {lessonsData.map((category) => (
+                                    <div key={category.id} className="space-y-4">
+                                        <div className="flex items-center gap-3">
+                                            <FolderOpen size={20} className="text-cyan-400" />
+                                            <h4 className="text-lg font-bold text-white uppercase tracking-tighter">{category.title}</h4>
+                                            <span className="px-3 py-1 bg-white/5 rounded-lg text-[10px] font-bold uppercase tracking-wider text-slate-500 border border-white/10">
+                                                {category.files.length} files
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-3">
+                                            {category.files.map((file, idx) => (
+                                                <div 
+                                                    key={idx}
+                                                    className="bg-slate-800/40 border border-white/10 p-4 rounded-2xl flex items-center justify-between hover:border-cyan-500/30 hover:bg-white/[0.02] transition-all group"
+                                                >
+                                                    <div className="flex items-center gap-4 overflow-hidden">
+                                                        <div className="w-10 h-10 bg-gradient-to-br from-red-500/20 to-orange-500/10 border border-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                                            <FileText size={18} className="text-red-400" />
+                                                        </div>
+                                                        <h5 className="text-sm font-medium text-slate-300 truncate group-hover:text-white transition-colors">{file}</h5>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 pl-4 border-l border-white/10">
+                                                        <button 
+                                                            onClick={() => handleFileView(category.path, file)} 
+                                                            className="p-2 text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all"
+                                                            title="Preview"
+                                                        >
+                                                            <Eye size={16} />
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleDownload(category.path, file)} 
+                                                            className="p-2 text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all"
+                                                            title="Download"
+                                                        >
+                                                            <Download size={16} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* --- PDF PREVIEW MODAL --- */}
+                {showPdfModal && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-0 md:p-8 bg-black/95 backdrop-blur-xl">
+                        <div className="bg-gradient-to-b from-slate-900 to-slate-950 w-full max-w-7xl h-full md:h-[90vh] rounded-none md:rounded-3xl border-none md:border-white/10 flex flex-col shadow-2xl overflow-hidden">
+                            {/* Modal Header */}
+                            <div className="flex items-center justify-between p-6 border-b border-white/10 bg-gradient-to-r from-white/5 to-transparent">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-red-500/20 to-orange-500/10 border border-red-500/20 rounded-xl flex items-center justify-center">
+                                        <FileText size={24} className="text-red-400" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-base font-bold text-white truncate max-w-xl">{currentFileName}</h3>
+                                        <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mt-1">PDF Preview</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button 
+                                        onClick={() => handleDownload(currentPdfUrl.split('/files/')[1].split('/').slice(0, -1).join('/'), currentFileName)}
+                                        className="p-3 bg-white/5 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/30 rounded-xl transition-all group"
+                                        title="Download"
+                                    >
+                                        <Download size={18} className="text-slate-400 group-hover:text-cyan-400 transition-colors" />
+                                    </button>
+                                    <button 
+                                        onClick={() => setShowPdfModal(false)}
+                                        className="p-3 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-xl transition-all group"
+                                    >
+                                        <X size={20} className="text-slate-400 group-hover:text-red-400 transition-colors" />
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {/* Modal Content */}
+                            <div className="flex-1 bg-gradient-to-b from-slate-800/30 to-slate-900/50 relative overflow-auto">
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.03),transparent_50%)] pointer-events-none"></div>
+                                <iframe 
+                                    src={currentPdfUrl} 
+                                    className="w-full h-full rounded-b-3xl border-none relative z-10"
+                                    title="PDF Preview"
+                                    scrolling="yes"
+                                    style={{ minHeight: '100%', width: '100%', touchAction: 'auto' }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
 
             </div>
         </AuthenticatedLayout>

@@ -74,6 +74,15 @@ Route::middleware(['auth', 'verified'])->group(function () use ($secureCookieSlu
     // Delete Account
     Route::delete("user/{$secureCookieSlug}/profile", [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+
+    // --- ACCOUNT ROUTES (Manage Account) ---
+    // Edit Account Form
+    Route::get("user/{$secureCookieSlug}/account", [AccountController::class, 'edit'])
+        ->name('account.edit');
+
+    // Update Account Info
+    Route::post("user/{$secureCookieSlug}/account", [AccountController::class, 'update'])
+        ->name('account.update');
         
 });
 

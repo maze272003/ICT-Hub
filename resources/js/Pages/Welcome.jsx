@@ -121,9 +121,11 @@ const Welcome = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl shadow-lg">
-                <Cpu className="text-white w-5 h-5 md:w-6 md:h-6" />
+              {/* --- CHANGED: Replaced Icon with School Logo --- */}
+              <div className="w-10 h-10 bg-white rounded-xl shadow-lg p-0.5 overflow-hidden flex items-center justify-center">
+                <img src="/images/fmnhs.png" alt="School Logo" className="w-full h-full object-cover rounded-lg" />
               </div>
+              {/* ----------------------------------------------- */}
               <span className="text-xl md:text-2xl font-black tracking-tighter text-white italic">
                 TEch<span className="text-cyan-400">Nest</span>
               </span>

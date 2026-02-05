@@ -2,53 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest; // Or create a custom Request
+use App\Models\User;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Services\AccountService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 
 class AccountController extends Controller
 {
-    // Display the Manage Account page
-    public function edit(Request $request)
+    protected AccountService $accountService;
+    protected UserRepositoryInterface $userRepository;
+
+    public function __construct(AccountService $accountService, UserRepositoryInterface $userRepository)
     {
-        return Inertia::render('Account/Edit', [
-            'status' => session('status'),
-        ]);
+        $this->accountService = $accountService;
+        $this->userRepository = $userRepository;
     }
 
-    // Handle Profile & Password Updates
+    /**
+     * Display the Manage Account page
+     */
+    public function edit(Request $request)
+    {
+        $data = $this->accountService->getAccountData();
+        
+        return Inertia::render('Account/Edit', $data);
+    }
+
+    /**
+     * Handle Profile & Password Updates
+     */
     public function update(Request $request)
     {
-        // 1. Validate Input
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$request->user()->id],
-            // Optional: Include password validation only if filled
-            'password' => ['nullable', 'confirmed', Password::defaults()],
-        ]);
-
         $user = $request->user();
+        $data = $request->all();
 
-        // 2. Update Basic Info
-        $user->fill([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-        ]);
-
-        // 3. Update Password (if provided)
-        if (isset($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
+        try {
+            $result = $this->accountService->updateAccount($user, $data);
+            
+            return redirect()->route('account.edit')->with('status', $result['message']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'An error occurred while updating your account.')
+                ->withInput();
         }
-
-        // 4. Save
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null; // Reset verification if email changes
-        }
-
-        $user->save();
-
-        return redirect()->route('account.edit')->with('status', 'Account updated successfully!');
     }
 }

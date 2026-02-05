@@ -22,8 +22,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             
-            // Role column: Default sa 'student'
-            $table->enum('role', ['student', 'teacher'])->default('student');
+            // Role column: Lahat ng roles
+            $table->enum('role', ['student', 'teacher', 'admin'])->default('student');
             
             $table->rememberToken();
             $table->timestamps();

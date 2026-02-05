@@ -3,70 +3,76 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Services\StudentService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class StudentController extends Controller
 {
-    // --- READ (List with Search) ---
+    protected StudentService $studentService;
+    protected UserRepositoryInterface $userRepository;
+
+    public function __construct(StudentService $studentService, UserRepositoryInterface $userRepository)
+    {
+        $this->studentService = $studentService;
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * Display a listing of students with search functionality
+     */
     public function index(Request $request)
     {
-        $query = User::where('role', 'student');
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 15);
 
-        // Search Logic
-        if ($request->input('search')) {
-            $search = $request->input('search');
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('lrn', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
+        $students = $this->studentService->getStudentsWithSearch($search, $perPage);
 
         return Inertia::render('Teacher/Students/Index', [
-            'students' => $query->latest()->get(), // Or ->paginate(10) if you want pages
+            'students' => $students->items(), // Pass the actual data array instead of pagination object
             'filters' => $request->only(['search']),
         ]);
     }
 
-    // --- CREATE (Show Form) ---
+    /**
+     * Show the form for creating a new student
+     */
     public function create()
     {
         return Inertia::render('Teacher/Students/Create');
     }
 
-    // --- STORE (Save New Student) ---
+    /**
+     * Store a newly created student in storage
+     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'lrn' => 'required|string|unique:users,lrn',
-            // 'section' => 'required|string', // Uncomment if you added this column
-            'password' => 'required|string|min:8',
-        ]);
-
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'lrn' => $validated['lrn'],
-            'password' => Hash::make($validated['password']),
-            'role' => 'student', // Force role to student
-            // 'section' => $validated['section'],
-        ]);
-
-        return Redirect::route('students.index')->with('success', 'Student created successfully.');
+        try {
+            $student = $this->studentService->createStudent($request->all());
+            
+            return redirect()->route('students.index')->with('success', 'Student created successfully.');
+        } catch (ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'An error occurred while creating the student.')
+                ->withInput();
+        }
     }
 
-    // --- EDIT (Show Form) ---
+    /**
+     * Show the form for editing the specified student
+     */
     public function edit(User $student)
     {
         // Security check: ensure the user being edited is actually a student
         if ($student->role !== 'student') {
-            abort(403);
+            abort(Response::HTTP_FORBIDDEN);
         }
 
         return Inertia::render('Teacher/Students/Edit', [
@@ -74,34 +80,51 @@ class StudentController extends Controller
         ]);
     }
 
-    // --- UPDATE (Save Changes) ---
+    /**
+     * Update the specified student in storage
+     */
     public function update(Request $request, User $student)
     {
+        // Security check: ensure the user being edited is actually a student
         if ($student->role !== 'student') {
-            abort(403);
+            abort(Response::HTTP_FORBIDDEN);
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($student->id)],
-            'lrn' => ['required', 'string', Rule::unique('users')->ignore($student->id)],
-            // 'section' => 'required|string',
-        ]);
-
-        $student->update($validated);
-
-        return Redirect::route('students.index')->with('success', 'Student updated successfully.');
+        try {
+            $this->studentService->updateStudent($student, $request->all());
+            
+            return redirect()->route('students.index')->with('success', 'Student updated successfully.');
+        } catch (ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'An error occurred while updating the student.')
+                ->withInput();
+        }
     }
 
-    // --- DELETE (Remove Student) ---
+    /**
+     * Remove the specified student from storage
+     */
     public function destroy(User $student)
     {
+        // Security check: ensure the user being deleted is actually a student
         if ($student->role !== 'student') {
-            abort(403);
+            abort(Response::HTTP_FORBIDDEN);
         }
 
-        $student->delete();
-
-        return Redirect::back()->with('success', 'Student deleted.');
+        try {
+            $this->studentService->deleteStudent($student);
+            
+            return redirect()->back()->with('success', 'Student deleted successfully.');
+        } catch (ValidationException $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'An error occurred while deleting the student.');
+        }
     }
 }
