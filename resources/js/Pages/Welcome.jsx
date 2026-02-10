@@ -350,10 +350,10 @@ const Welcome = () => {
 
                     {/* No image yet for Gelo - defaults to Icon */}
                     <LaptopCard 
-                        name="Gelo Sanchez" 
+                        name="Marc Gelo Sanchez" 
                         role="Researcher" 
                         type="student" 
-                        // image="images/gelo.jpg"  <-- Uncomment this line when you have the picture!
+                        image="images/marc.jpg"
                     />
 
                     {/* Updated: Jericka Ante with Image */}
@@ -369,7 +369,7 @@ const Welcome = () => {
                         name="Job Mendoza" 
                         role="Researcher" 
                         type="student" 
-                        // image="images/job.jpg" <-- Uncomment this line when you have the picture!
+                        image="images/job.jpg"
                     />
                 </div>
             </div>
