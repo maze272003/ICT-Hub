@@ -378,14 +378,25 @@ const Welcome = () => {
       </section>
 
       <footer className="py-12 border-t border-white/5 text-center px-6 bg-slate-950">
-        <div className="flex items-center justify-center space-x-2 mb-4">
-          <Cpu className="text-cyan-500 w-5 h-5" />
-          <span className="text-xl font-black text-white italic uppercase tracking-tighter">TEch<span className="text-cyan-400">Nest</span></span>
-        </div>
-        <p className="text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em]">
-           Fort Magsaysay National High School • 2026
-        </p>
-      </footer>
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <Cpu className="text-cyan-500 w-5 h-5" />
+            <span className="text-xl font-black text-white italic uppercase tracking-tighter">
+              TEch<span className="text-cyan-400">Nest</span>
+            </span>
+          </div>
+        
+          <p className="text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em]">
+            Fort Magsaysay National High School • 2026
+          </p>
+        
+          <p className="mt-3 text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em]">
+            Built by <span className="text-cyan-400">JonatasDev</span>
+          </p>
+        
+          <p className="mt-2 text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em]">
+            Powered by <span className="text-cyan-400">Dokploy</span> Automation
+          </p>
+        </footer>
     </div>
   );
 };
